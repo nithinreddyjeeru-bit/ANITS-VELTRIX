@@ -57,35 +57,54 @@ export default function ProfilePage() {
         secondaryAction={{ label: "Dashboard", href: dash }}
       />
 
-      <section style={{ padding: "0 60px 100px", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "24px", maxWidth: "1000px", margin: "0 auto" }}>
-        <div className="brutal-card card-green">
-          <div className="font-bangers" style={{ fontSize: "3rem" }}>{profile.xp}</div>
-          <div className="font-bebas" style={{ opacity: 0.7, letterSpacing: "2px" }}>TOTAL XP</div>
+      <section style={{ padding: "0 clamp(16px, 4vw, 60px) 100px", maxWidth: "1000px", margin: "0 auto" }}>
+        <div className="profile-stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "24px", marginBottom: "40px" }}>
+          <div className="brutal-card card-green stat-item">
+            <div className="font-bangers stat-val">{profile.xp}</div>
+            <div className="font-bebas stat-label">TOTAL XP</div>
+          </div>
+          <div className="brutal-card card-pink stat-item">
+            <div className="font-bangers stat-val">#{stats.rank || "—"}</div>
+            <div className="font-bebas stat-label">GLOBAL RANK</div>
+          </div>
+          <div className="brutal-card card-blue stat-item">
+            <div className="font-bangers stat-val">{stats.events}</div>
+            <div className="font-bebas stat-label">EVENTS JOINED</div>
+          </div>
+          <div className="brutal-card stat-item">
+            <div className="font-bangers stat-val">{stats.certs}</div>
+            <div className="font-bebas stat-label">CERTIFICATES</div>
+          </div>
         </div>
-        <div className="brutal-card card-pink">
-          <div className="font-bangers" style={{ fontSize: "3rem" }}>#{stats.rank || "—"}</div>
-          <div className="font-bebas" style={{ opacity: 0.7, letterSpacing: "2px" }}>GLOBAL RANK</div>
-        </div>
-        <div className="brutal-card card-blue">
-          <div className="font-bangers" style={{ fontSize: "3rem" }}>{stats.events}</div>
-          <div className="font-bebas" style={{ opacity: 0.7, letterSpacing: "2px" }}>EVENTS JOINED</div>
-        </div>
-        <div className="brutal-card">
-          <div className="font-bangers" style={{ fontSize: "3rem" }}>{stats.certs}</div>
-          <div className="font-bebas" style={{ opacity: 0.7, letterSpacing: "2px" }}>CERTIFICATES</div>
+
+        {profile.bio && (
+          <div className="brutal-card bio-card" style={{ maxWidth: "700px", margin: "0 auto 60px", padding: "32px" }}>
+            <h3 className="font-bangers" style={{ fontSize: "1.5rem", marginBottom: "12px" }}>BIO</h3>
+            <p className="font-space" style={{ lineHeight: 1.7, opacity: 0.8 }}>{profile.bio}</p>
+          </div>
+        )}
+
+        <div style={{ textAlign: "center", paddingBottom: "80px" }}>
+          <Link href="/leaderboard" className="btn btn-black">VIEW LEADERBOARD</Link>
         </div>
       </section>
 
-      {profile.bio && (
-        <div className="brutal-card" style={{ maxWidth: "700px", margin: "0 auto 60px", padding: "32px" }}>
-          <h3 className="font-bangers" style={{ fontSize: "1.5rem", marginBottom: "12px" }}>BIO</h3>
-          <p className="font-space" style={{ lineHeight: 1.7, opacity: 0.8 }}>{profile.bio}</p>
-        </div>
-      )}
+      <style jsx>{`
+        .stat-val { font-size: 3rem; line-height: 1; }
+        .stat-label { opacity: 0.7; letter-spacing: 2px; font-size: 0.9rem; margin-top: 4px; }
+        .stat-item { padding: 30px; }
 
-      <div style={{ textAlign: "center", paddingBottom: "80px" }}>
-        <Link href="/leaderboard" className="btn btn-black">VIEW LEADERBOARD</Link>
-      </div>
+        @media (max-width: 768px) {
+          .profile-stats-grid { gridTemplateColumns: 1fr 1fr; }
+          .stat-item { padding: 20px; }
+          .stat-val { font-size: 2.2rem; }
+        }
+
+        @media (max-width: 480px) {
+          .profile-stats-grid { gridTemplateColumns: 1fr; }
+          .bio-card { padding: 20px; }
+        }
+      `}</style>
     </>
   );
 }

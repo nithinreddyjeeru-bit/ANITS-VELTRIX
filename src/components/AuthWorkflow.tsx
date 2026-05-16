@@ -120,14 +120,14 @@ export function AuthWorkflow() {
   };
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", padding: "40px 20px" }}>
-      <div className="card" style={{ width: "100%", maxWidth: "560px", background: "white" }}>
+    <div style={{ display: "flex", justifyContent: "center", padding: "clamp(20px, 5vw, 40px) clamp(16px, 4vw, 20px)" }}>
+      <div className="card auth-card" style={{ width: "100%", maxWidth: "560px", background: "white" }}>
         <form onSubmit={handleAuth} style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
           <div style={{ display: "flex", gap: "10px" }}>
             <button 
               type="button" 
               onClick={() => setMode("login")} 
-              className="btn" 
+              className="btn mode-btn" 
               style={{ flex: 1, background: mode === "login" ? "var(--pink)" : "white", color: mode === "login" ? "white" : "black" }}
             >
               LOGIN
@@ -135,30 +135,30 @@ export function AuthWorkflow() {
             <button 
               type="button" 
               onClick={() => setMode("signup")} 
-              className="btn" 
+              className="btn mode-btn" 
               style={{ flex: 1, background: mode === "signup" ? "var(--green)" : "white", color: "var(--black)" }}
             >
               SIGN UP
             </button>
           </div>
 
-          <div className="font-space" style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+          <div className="font-space auth-fields" style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
             {mode === "signup" && (
               <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "20px" }}>
-                <label style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                  <span className="font-bebas" style={{ fontSize: "1.2rem", letterSpacing: "1px" }}>YOUR FULL NAME</span>
-                  <input className="brutal-card" style={{ padding: "16px", border: "3px solid black" }} value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required disabled={loading} placeholder="Tony Stark" />
+                <label className="auth-label">
+                  <span className="font-bebas field-title">YOUR FULL NAME</span>
+                  <input className="brutal-card auth-input" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required disabled={loading} placeholder="Tony Stark" />
                 </label>
 
-                <label style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                  <span className="font-bebas" style={{ fontSize: "1.2rem", letterSpacing: "1px" }}>REGISTRATION NUMBER</span>
-                  <input className="brutal-card" style={{ padding: "16px", border: "3px solid black" }} value={formData.registration_no} onChange={(e) => setFormData({ ...formData, registration_no: e.target.value })} required disabled={loading} placeholder="312xxxxxxxxx" />
+                <label className="auth-label">
+                  <span className="font-bebas field-title">REGISTRATION NUMBER</span>
+                  <input className="brutal-card auth-input" value={formData.registration_no} onChange={(e) => setFormData({ ...formData, registration_no: e.target.value })} required disabled={loading} placeholder="312xxxxxxxxx" />
                 </label>
                 
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-                  <label style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                    <span className="font-bebas" style={{ fontSize: "1.2rem", letterSpacing: "1px" }}>DEPARTMENT</span>
-                    <select className="brutal-card" style={{ padding: "16px", border: "3px solid black" }} value={formData.department} onChange={(e) => setFormData({ ...formData, department: e.target.value })} required disabled={loading}>
+                <div className="auth-grid-row">
+                  <label className="auth-label">
+                    <span className="font-bebas field-title">DEPARTMENT</span>
+                    <select className="brutal-card auth-input" value={formData.department} onChange={(e) => setFormData({ ...formData, department: e.target.value })} required disabled={loading}>
                       <option value="">Select...</option>
                       <option value="CSE">CSE</option>
                       <option value="IT">IT</option>
@@ -169,9 +169,9 @@ export function AuthWorkflow() {
                       <option value="MBA">MBA</option>
                     </select>
                   </label>
-                  <label style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                    <span className="font-bebas" style={{ fontSize: "1.2rem", letterSpacing: "1px" }}>YEAR</span>
-                    <select className="brutal-card" style={{ padding: "16px", border: "3px solid black" }} value={formData.year} onChange={(e) => setFormData({ ...formData, year: e.target.value })} required disabled={loading}>
+                  <label className="auth-label">
+                    <span className="font-bebas field-title">YEAR</span>
+                    <select className="brutal-card auth-input" value={formData.year} onChange={(e) => setFormData({ ...formData, year: e.target.value })} required disabled={loading}>
                       <option value="1">1st Year</option>
                       <option value="2">2nd Year</option>
                       <option value="3">3rd Year</option>
@@ -180,29 +180,29 @@ export function AuthWorkflow() {
                   </label>
                 </div>
 
-                <label style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                  <span className="font-bebas" style={{ fontSize: "1.2rem", letterSpacing: "1px" }}>BIO / INTERESTS</span>
-                  <textarea className="brutal-card" style={{ padding: "16px", minHeight: "80px", resize: "none", border: "3px solid black" }} value={formData.bio} onChange={(e) => setFormData({ ...formData, bio: e.target.value })} placeholder="Robotics, Design, Speedrunning..." disabled={loading} />
+                <label className="auth-label">
+                  <span className="font-bebas field-title">BIO / INTERESTS</span>
+                  <textarea className="brutal-card auth-input" style={{ minHeight: "80px", resize: "none" }} value={formData.bio} onChange={(e) => setFormData({ ...formData, bio: e.target.value })} placeholder="Robotics, Design, Speedrunning..." disabled={loading} />
                 </label>
               </div>
             )}
             
             {mode === "signup" || mode === "reset" ? (
-              <label style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                <span className="font-bebas" style={{ fontSize: "1.2rem", letterSpacing: "1px" }}>CAMPUS EMAIL</span>
-                <input className="brutal-card" type="email" style={{ padding: "16px", border: "3px solid black" }} value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required disabled={loading} placeholder="id@anits.edu.in" />
+              <label className="auth-label">
+                <span className="font-bebas field-title">CAMPUS EMAIL</span>
+                <input className="brutal-card auth-input" type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required disabled={loading} placeholder="id@anits.edu.in" />
               </label>
             ) : (
-              <label style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                <span className="font-bebas" style={{ fontSize: "1.2rem", letterSpacing: "1px" }}>REGISTRATION NUMBER</span>
-                <input className="brutal-card" style={{ padding: "16px", border: "3px solid black" }} value={formData.registration_no} onChange={(e) => setFormData({ ...formData, registration_no: e.target.value })} required disabled={loading} placeholder="312xxxxxxxxx" />
+              <label className="auth-label">
+                <span className="font-bebas field-title">REGISTRATION NUMBER</span>
+                <input className="brutal-card auth-input" value={formData.registration_no} onChange={(e) => setFormData({ ...formData, registration_no: e.target.value })} required disabled={loading} placeholder="312xxxxxxxxx" />
               </label>
             )}
             
             {mode !== "reset" && (
-              <label style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                <span className="font-bebas" style={{ fontSize: "1.2rem", letterSpacing: "1px" }}>PASSWORD</span>
-                <input className="brutal-card" type="password" style={{ padding: "16px", border: "3px solid black" }} value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} required disabled={loading} minLength={6} placeholder="••••••••" />
+              <label className="auth-label">
+                <span className="font-bebas field-title">PASSWORD</span>
+                <input className="brutal-card auth-input" type="password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} required disabled={loading} minLength={6} placeholder="••••••••" />
               </label>
             )}
           </div>
@@ -219,7 +219,7 @@ export function AuthWorkflow() {
           )}
 
           <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginTop: "10px" }}>
-            <button type="submit" className="btn btn-green" style={{ width: "100%", padding: "18px", justifyContent: "center", fontSize: "1.6rem" }} disabled={loading}>
+            <button type="submit" className="btn btn-green auth-submit" disabled={loading}>
               {loading ? "AUTHENTICATING..." : mode === "login" ? "ENTER UNIVERSE" : mode === "reset" ? "SEND LINK" : "JOIN UNIVERSE"}
             </button>
 
@@ -240,16 +240,37 @@ export function AuthWorkflow() {
               <div style={{ flex: 1, height: "2px", background: "black", opacity: 0.1 }} />
             </div>
 
-            <button type="button" onClick={handleGoogle} className="btn" style={{ width: "100%", justifyContent: "center", background: "white" }} disabled={loading}>
+            <button type="button" onClick={handleGoogle} className="btn google-btn" disabled={loading}>
               CONTINUE WITH GOOGLE
             </button>
           </div>
 
-          <Link href="/events" className="font-bebas" style={{ textAlign: "center", opacity: 0.5, textDecoration: "none", fontSize: "0.9rem", marginTop: "10px" }}>
+          <Link href="/events" className="font-bebas arena-link">
             JUST BROWSE THE ARENA FOR NOW →
           </Link>
         </form>
       </div>
+
+      <style jsx>{`
+        .auth-card { padding: 40px; }
+        .auth-label { display: flex; flexDirection: column; gap: 8px; }
+        .field-title { fontSize: 1.2rem; letterSpacing: 1px; }
+        .auth-input { padding: 16px; border: 3px solid black; }
+        .auth-grid-row { display: grid; gridTemplateColumns: 1fr 1fr; gap: 16px; }
+        .auth-submit { width: 100%; padding: 18px; justifyContent: center; fontSize: 1.6rem; }
+        .google-btn { width: 100%; justifyContent: center; background: white; font-size: 1.2rem; padding: 16px; }
+        .arena-link { textAlign: center; opacity: 0.5; textDecoration: none; fontSize: 0.9rem; marginTop: 10px; }
+
+        @media (max-width: 480px) {
+          .auth-card { padding: 24px; }
+          .auth-grid-row { gridTemplateColumns: 1fr; }
+          .auth-submit { font-size: 1.3rem; padding: 14px; }
+          .mode-btn { font-size: 1rem; padding: 10px; }
+          .google-btn { font-size: 1rem; padding: 12px; }
+        }
+      `}</style>
     </div>
+  );
+}
   );
 }

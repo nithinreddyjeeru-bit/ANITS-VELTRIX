@@ -89,52 +89,67 @@ export function ProfileSettingsForm() {
   }
 
   return (
-    <form onSubmit={handleSave} style={{ maxWidth: "560px", margin: "0 auto", padding: "0 60px 80px" }}>
-      <div className="brutal-card" style={{ padding: "40px", display: "flex", flexDirection: "column", gap: "20px" }}>
+    <form onSubmit={handleSave} style={{ maxWidth: "600px", margin: "0 auto", padding: "0 clamp(16px, 4vw, 40px) 100px" }}>
+      <div className="brutal-card settings-card" style={{ padding: "clamp(24px, 5vw, 40px)", display: "flex", flexDirection: "column", gap: "24px" }}>
         <h2 className="font-bangers" style={{ fontSize: "2rem" }}>EDIT PROFILE</h2>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+        <div className="avatar-section" style={{ display: "flex", alignItems: "center", gap: "20px" }}>
           <div
+            className="avatar-preview"
             style={{
               width: 80,
               height: 80,
+              flexShrink: 0,
               border: "3px solid var(--black)",
               background: form.avatar_url ? `url(${form.avatar_url}) center/cover` : "var(--green)",
             }}
           />
-          <label className="btn font-bebas" style={{ cursor: "pointer" }}>
+          <label className="btn font-bebas" style={{ cursor: "pointer", fontSize: "0.9rem", padding: "8px 16px" }}>
             UPLOAD PHOTO
             <input type="file" accept="image/*" hidden onChange={handleAvatar} />
           </label>
         </div>
 
-        <label className="font-bebas">
-          DISPLAY NAME
-          <input className="brutal-card" style={{ width: "100%", marginTop: "8px", padding: "12px" }} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
-        </label>
-        <label className="font-bebas">
-          DEPARTMENT
-          <input className="brutal-card" style={{ width: "100%", marginTop: "8px", padding: "12px" }} value={form.department} onChange={(e) => setForm({ ...form, department: e.target.value })} placeholder="e.g. CSE" />
-        </label>
-        <label className="font-bebas">
-          YEAR
-          <select className="brutal-card" style={{ width: "100%", marginTop: "8px", padding: "12px" }} value={form.year} onChange={(e) => setForm({ ...form, year: Number(e.target.value) })}>
-            {[1, 2, 3, 4].map((y) => (
-              <option key={y} value={y}>Year {y}</option>
-            ))}
-          </select>
-        </label>
-        <label className="font-bebas">
-          BIO
-          <textarea className="brutal-card" style={{ width: "100%", marginTop: "8px", padding: "12px", minHeight: "90px" }} value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} />
-        </label>
+        <div className="form-fields" style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+          <label className="font-bebas field-label">
+            DISPLAY NAME
+            <input className="brutal-card settings-input" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
+          </label>
+          <label className="font-bebas field-label">
+            DEPARTMENT
+            <input className="brutal-card settings-input" value={form.department} onChange={(e) => setForm({ ...form, department: e.target.value })} placeholder="e.g. CSE" />
+          </label>
+          <label className="font-bebas field-label">
+            YEAR
+            <select className="brutal-card settings-input" value={form.year} onChange={(e) => setForm({ ...form, year: Number(e.target.value) })}>
+              {[1, 2, 3, 4].map((y) => (
+                <option key={y} value={y}>Year {y}</option>
+              ))}
+            </select>
+          </label>
+          <label className="font-bebas field-label">
+            BIO
+            <textarea className="brutal-card settings-input" style={{ minHeight: "100px" }} value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} />
+          </label>
+        </div>
 
-        {message && <div className="sticker">{message}</div>}
+        {message && <div className="sticker" style={{ textAlign: "center" }}>{message}</div>}
 
-        <button type="submit" className="btn btn-green" style={{ justifyContent: "center", padding: "14px" }} disabled={saving}>
+        <button type="submit" className="btn btn-green save-btn" style={{ justifyContent: "center", padding: "16px", fontSize: "1.2rem" }} disabled={saving}>
           {saving ? "SAVING..." : "SAVE PROFILE"}
         </button>
       </div>
+
+      <style jsx>{`
+        .field-label { display: flex; flex-direction: column; gap: 8px; font-size: 1.1rem; }
+        .settings-input { width: 100%; padding: 14px; border: 3px solid black; }
+
+        @media (max-width: 480px) {
+          .avatar-section { flex-direction: column; align-items: flex-start; gap: 12px; }
+          .save-btn { font-size: 1rem; padding: 12px; }
+          .settings-card { padding: 20px; }
+        }
+      `}</style>
     </form>
   );
 }
