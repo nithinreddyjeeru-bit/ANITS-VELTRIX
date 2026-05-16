@@ -133,14 +133,49 @@ function TimelineItem({ title, date, active, last }: { title: string, date: stri
   );
 }
 
-const CAT_COLORS: Record<string, string> = {
-  Tech: "var(--blue)",
-  Robotics: "var(--orange)",
-  Design: "var(--pink)",
-  Cultural: "var(--purple)",
-  Sports: "var(--green)",
-  Workshop: "var(--blue)",
-  General: "var(--green)",
+const CAT_THEMES: Record<string, { hero: string, accent: string, secondary: string, glow: string }> = {
+  Tech: { 
+    hero: "linear-gradient(180deg, #021a32 0%, #050505 100%)", 
+    accent: "#00F2FF", 
+    secondary: "#FFD700",
+    glow: "rgba(0, 242, 255, 0.4)"
+  },
+  Design: { 
+    hero: "linear-gradient(180deg, #32022a 0%, #050505 100%)", 
+    accent: "#bc00ff", 
+    secondary: "#FFD700",
+    glow: "rgba(188, 0, 255, 0.4)"
+  },
+  Robotics: { 
+    hero: "linear-gradient(180deg, #321402 0%, #050505 100%)", 
+    accent: "#FF4D00", 
+    secondary: "#00FF9D",
+    glow: "rgba(255, 77, 0, 0.4)"
+  },
+  Cultural: { 
+    hero: "linear-gradient(180deg, #1a0232 0%, #050505 100%)", 
+    accent: "#FF007A", 
+    secondary: "#FFD700",
+    glow: "rgba(255, 0, 122, 0.4)"
+  },
+  Sports: { 
+    hero: "linear-gradient(180deg, #023214 0%, #050505 100%)", 
+    accent: "#00FF9D", 
+    secondary: "#FFFFFF",
+    glow: "rgba(0, 255, 157, 0.4)"
+  },
+  Workshop: { 
+    hero: "linear-gradient(180deg, #022a32 0%, #050505 100%)", 
+    accent: "#00A3FF", 
+    secondary: "#FFD700",
+    glow: "rgba(0, 163, 255, 0.4)"
+  },
+  General: { 
+    hero: "linear-gradient(180deg, #1a1a1a 0%, #050505 100%)", 
+    accent: "#ffffff", 
+    secondary: "#00FF9D",
+    glow: "rgba(255, 255, 255, 0.2)"
+  }
 };
 
 // ============================================================
@@ -232,7 +267,7 @@ export default function EventDetailPage() {
   const isFull = regCount >= event.max_seats;
   const isPast = new Date(event.event_date) < new Date();
   const fillPct = Math.min((regCount / event.max_seats) * 100, 100);
-  const categoryColor = CAT_COLORS[event.category] || "var(--green)";
+  const theme = CAT_THEMES[event.category] || CAT_THEMES.General;
   const CategoryIcon = getCategoryIcon(event.category);
 
   return (
@@ -242,7 +277,7 @@ export default function EventDetailPage() {
       {/* HERO SECTION */}
       <section style={{ 
         padding: "100px 60px 140px", 
-        background: "linear-gradient(180deg, #120422 0%, #050505 100%)", 
+        background: theme.hero, 
         color: "white", 
         position: "relative",
         borderBottom: "8px solid var(--black)",
@@ -252,13 +287,13 @@ export default function EventDetailPage() {
         
         <div style={{ maxWidth: "1400px", margin: "0 auto", display: "grid", gridTemplateColumns: "1.2fr 0.8fr", gap: "80px", alignItems: "center", position: "relative", zIndex: 5 }}>
           <div>
-             <Link href="/events" style={{ display: "inline-flex", alignItems: "center", gap: "8px", textDecoration: "none", color: "#00F2FF", marginBottom: "40px" }} className="font-bebas">
+             <Link href="/events" style={{ display: "inline-flex", alignItems: "center", gap: "8px", textDecoration: "none", color: theme.accent, marginBottom: "40px" }} className="font-bebas">
               <ArrowLeft size={20} /> BACK TO LISTING
             </Link>
             
             <div style={{ display: "flex", gap: "12px", marginBottom: "32px" }}>
                <motion.span animate={{ scale: [1, 1.05, 1] }} transition={{ repeat: Infinity, duration: 2 }} className="sticker sticker-pink" style={{ fontSize: "1rem", boxShadow: "4px 4px 0 #000" }}>🔥 HOT EVENT</motion.span>
-               <span className="sticker" style={{ background: "#FFD700", color: "black", fontSize: "1rem", boxShadow: "4px 4px 0 #000" }}>✨ XP BOOST</span>
+               <span className="sticker" style={{ background: theme.secondary, color: "black", fontSize: "1rem", boxShadow: "4px 4px 0 #000" }}>✨ XP BOOST</span>
             </div>
 
             <h1 className="font-bangers" style={{ 
@@ -266,14 +301,14 @@ export default function EventDetailPage() {
               lineHeight: 0.8, 
               textTransform: "uppercase", 
               color: "#fff",
-              textShadow: "6px 6px 0 #bc00ff, 12px 12px 0 #000"
+              textShadow: `6px 6px 0 ${theme.accent}, 12px 12px 0 #000`
             }}>
               {event.title}
             </h1>
 
             <div className="event-detail-meta" style={{ marginTop: "48px", display: "flex", gap: "40px", opacity: 0.9 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}><Calendar size={28} color="#FFD700" /> <span className="font-space" style={{ fontSize: "1.1rem" }}>{new Date(event.event_date).toLocaleDateString("en-IN", { day: 'numeric', month: 'long', year: 'numeric' })}</span></div>
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}><MapPin size={28} color="#FFD700" /> <span className="font-space" style={{ fontSize: "1.1rem" }}>{event.venue || "Campus Arena"}</span></div>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}><Calendar size={28} color={theme.secondary} /> <span className="font-space" style={{ fontSize: "1.1rem" }}>{new Date(event.event_date).toLocaleDateString("en-IN", { day: 'numeric', month: 'long', year: 'numeric' })}</span></div>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}><MapPin size={28} color={theme.secondary} /> <span className="font-space" style={{ fontSize: "1.1rem" }}>{event.venue || "Campus Arena"}</span></div>
               <div style={{ display: "flex", alignItems: "center", gap: "12px", color: "#00FF9D" }} className="glow-xp"><Zap size={28} fill="currentColor" /> <span className="font-bangers" style={{ fontSize: "1.8rem" }}>+{event.xp_reward} XP</span></div>
             </div>
           </div>
@@ -288,13 +323,13 @@ export default function EventDetailPage() {
                 borderRadius: "32px",
                 padding: "48px",
                 border: "6px solid black",
-                boxShadow: "24px 24px 0 #bc00ff",
+                boxShadow: `24px 24px 0 ${theme.accent}`,
                 position: "relative",
                 overflow: "hidden"
               }}
             >
               <div className="holographic-pass" />
-              <div className="scan-line" style={{ background: "rgba(188, 0, 255, 0.4)", boxShadow: "0 0 15px #bc00ff" }} />
+              <div className="scan-line" style={{ background: theme.glow, boxShadow: `0 0 15px ${theme.accent}` }} />
               
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "40px" }}>
                 <span className="font-bangers" style={{ fontSize: "1.8rem", letterSpacing: "2px" }}>VELTRIX ARENA</span>
@@ -314,7 +349,7 @@ export default function EventDetailPage() {
                    justifyContent: "center",
                    boxShadow: "6px 6px 0 black"
                  }}>
-                    <CategoryIcon size={80} color="#bc00ff" />
+                    <CategoryIcon size={80} color={theme.accent} />
                  </div>
                  <h2 className="font-bangers" style={{ fontSize: "2.4rem", marginBottom: "8px" }}>{event.title}</h2>
                  <p className="font-space" style={{ opacity: 0.6, fontSize: "0.9rem" }}>SECURED MISSION ACCESS · QR ENCRYPTED</p>
@@ -336,7 +371,7 @@ export default function EventDetailPage() {
       </section>
 
       {/* QUICK STATS BAND */}
-      <section style={{ background: "#FFD700", borderBottom: "6px solid black", padding: "30px 60px" }}>
+      <section style={{ background: theme.secondary, borderBottom: "6px solid black", padding: "30px 60px" }}>
          <div style={{ maxWidth: "1400px", margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
                <Users size={40} />
@@ -405,11 +440,11 @@ export default function EventDetailPage() {
                color: "white", 
                padding: "64px", 
                textAlign: "center", 
-               boxShadow: "20px 20px 0 #bc00ff",
+               boxShadow: `20px 20px 0 ${theme.accent}`,
                border: "6px solid white" 
              }}>
                 <div style={{ 
-                  background: "#FFD700", 
+                  background: theme.secondary, 
                   width: "100px", 
                   height: "100px", 
                   borderRadius: "50%", 
@@ -419,11 +454,11 @@ export default function EventDetailPage() {
                   justifyContent: "center", 
                   margin: "-10px auto 32px", 
                   color: "black",
-                  boxShadow: "0 0 20px rgba(255,215,0,0.4)"
+                  boxShadow: `0 0 20px ${theme.glow}`
                 }}>
                    <Award size={56} />
                 </div>
-                <h2 className="font-bangers" style={{ fontSize: "4rem", color: "#FFD700", textShadow: "4px 4px 0 #000" }}>MISSION REWARDS</h2>
+                <h2 className="font-bangers" style={{ fontSize: "4rem", color: theme.secondary, textShadow: "4px 4px 0 #000" }}>MISSION REWARDS</h2>
                 <div style={{ display: "flex", justifyContent: "center", gap: "60px", margin: "48px 0" }}>
                    <div>
                       <div className="font-bangers" style={{ fontSize: "4.5rem", color: "#00FF9D" }}>+{event.xp_reward}</div>
@@ -431,13 +466,13 @@ export default function EventDetailPage() {
                    </div>
                    <div style={{ width: "3px", background: "white", opacity: 0.1 }} />
                    <div>
-                      <div className="font-bangers" style={{ fontSize: "4.5rem", color: "#00F2FF" }}>1</div>
+                      <div className="font-bangers" style={{ fontSize: "4.5rem", color: theme.accent }}>1</div>
                       <div className="font-bebas" style={{ opacity: 0.7, fontSize: "1.2rem" }}>ACHIEVEMENT</div>
                    </div>
                 </div>
                 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
                    <div className="sticker" style={{ background: "white", color: "black", transform: "rotate(-2deg)", padding: "10px 20px" }}>📜 MASTER CERTIFICATE</div>
-                   <div className="sticker" style={{ background: "#bc00ff", color: "white", transform: "rotate(3deg)", padding: "10px 20px" }}>⚡ ARENA RANK-UP</div>
+                   <div className="sticker" style={{ background: theme.accent, color: "white", transform: "rotate(3deg)", padding: "10px 20px" }}>⚡ ARENA RANK-UP</div>
                 </div>
              </div>
           </section>
