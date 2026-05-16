@@ -28,13 +28,27 @@ function Countdown({ targetDate }: { targetDate: string }) {
   }, [targetDate]);
 
   return (
-    <div style={{ display: "flex", gap: "12px", justifyContent: "center", marginTop: "20px" }}>
+    <div style={{ display: "flex", gap: "8px", justifyContent: "center", padding: "10px 0" }}>
       {[["d", "DAYS"], ["h", "HRS"], ["m", "MIN"], ["s", "SEC"]].map(([k, label]) => (
-        <div key={label} style={{ textAlign: "center" }}>
-          <div className="font-bangers" style={{ fontSize: "3rem", lineHeight: 1, color: "var(--green)" }}>
-            {String((timeLeft as any)[k]).padStart(2, "0")}
-          </div>
-          <div className="font-bebas" style={{ fontSize: "0.8rem", opacity: 0.6, letterSpacing: "2px" }}>{label}</div>
+        <div key={label} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
+          <motion.div 
+            key={timeLeft[k as keyof typeof timeLeft]}
+            initial={{ scale: 0.9, opacity: 0.8 }}
+            animate={{ scale: 1, opacity: 1 }}
+            style={{ 
+              background: "var(--black)",
+              border: "2px solid var(--green)",
+              borderRadius: "8px",
+              padding: "8px 4px",
+              minWidth: "60px",
+              boxShadow: "3px 3px 0 var(--green)"
+            }}
+          >
+            <div className="font-bangers" style={{ fontSize: "2.4rem", lineHeight: 1, color: "var(--green)" }}>
+              {String((timeLeft as any)[k]).padStart(2, "0")}
+            </div>
+          </motion.div>
+          <div className="font-bebas" style={{ fontSize: "0.7rem", opacity: 0.8, letterSpacing: "1px", color: "var(--green)" }}>{label}</div>
         </div>
       ))}
     </div>
@@ -269,8 +283,25 @@ export default function EventDetailPage() {
         <motion.aside initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
           {/* Countdown */}
           {!isPast && (
-            <div className="brutal-card card-black" style={{ color: "white", marginBottom: "24px", textAlign: "center" }}>
-              <div className="font-bebas" style={{ letterSpacing: "3px", opacity: 0.6, marginBottom: "4px" }}>BATTLE STARTS IN</div>
+            <div 
+              className="brutal-card" 
+              style={{ 
+                background: "var(--black)", 
+                color: "white", 
+                marginBottom: "24px", 
+                textAlign: "center",
+                padding: "24px 16px",
+                border: "4px solid var(--green)",
+                boxShadow: "10px 10px 0 var(--pink)",
+                position: "relative",
+                overflow: "hidden"
+              }}
+            >
+              <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "radial-gradient(circle at center, rgba(34, 255, 0, 0.1) 0%, transparent 70%)", pointerEvents: "none" }} />
+              <div className="font-bangers" style={{ letterSpacing: "2px", color: "var(--green)", fontSize: "1.4rem", marginBottom: "12px", position: "relative" }}>
+                <Zap size={18} style={{ verticalAlign: "middle", marginRight: "8px" }} />
+                BATTLE STARTS IN
+              </div>
               <Countdown targetDate={event.event_date} />
             </div>
           )}
