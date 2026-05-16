@@ -218,6 +218,7 @@ export default function EventDetailPage() {
   if (!event) return <div style={{ padding: "100px", textAlign: "center" }}><h1 className="font-bangers">ERROR 404: AREA COMPROMISED</h1></div>;
 
   const theme = CAT_THEMES[event.category] || CAT_THEMES.General;
+  const isFull = regCount >= event.max_seats;
   const fillPct = Math.min((regCount / event.max_seats) * 100, 100);
   const isPast = new Date(event.event_date) < new Date();
   const CategoryIcon = getCategoryIcon(event.category);
