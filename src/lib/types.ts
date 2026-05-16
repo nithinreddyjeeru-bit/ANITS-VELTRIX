@@ -8,6 +8,7 @@ export interface Profile {
   id: string;
   name: string;
   email: string;
+  registration_no: string;
   role: UserRole;
   department: string;
   year: number;

@@ -13,6 +13,7 @@ export function AuthWorkflow() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    registration_no: "",
     password: "",
     department: "",
     year: "1",
@@ -39,6 +40,7 @@ export function AuthWorkflow() {
     if (mode === "signup") {
       const email = formData.email.trim().toLowerCase();
       const name = formData.name.trim();
+      const registration_no = formData.registration_no.trim();
       const department = formData.department.trim();
       const bio = formData.bio.trim();
 
@@ -48,6 +50,7 @@ export function AuthWorkflow() {
         options: {
           data: {
             full_name: name,
+            registration_no,
             role: "student",
             department,
             year: Number(formData.year),
@@ -65,6 +68,7 @@ export function AuthWorkflow() {
           const profile = await ensureProfile(data.user, {
             name,
             email,
+            registration_no,
             role: "student",
             department,
             year: formData.year,
@@ -74,10 +78,28 @@ export function AuthWorkflow() {
         }
       }
     } else {
+      // Login via Registration Number
+      const registration_no = formData.registration_no.trim();
+      
+      // 1. Find the email associated with this registration number
+      const { data: profileData, error: profileError } = await supabase
+        .from("profiles")
+        .select("email")
+        .eq("registration_no", registration_no)
+        .single();
+
+      if (profileError || !profileData) {
+        setMessage("Error: Registration number not found.");
+        setLoading(false);
+        return;
+      }
+
+      // 2. Sign in with the found email
       const { data, error } = await supabase.auth.signInWithPassword({
-        email: formData.email.trim().toLowerCase(),
+        email: profileData.email,
         password: formData.password,
       });
+
       if (error) setMessage(`Error: ${error.message}`);
       else if (data.user) {
         const profile = await ensureProfile(data.user);
@@ -127,6 +149,11 @@ export function AuthWorkflow() {
                   <span className="font-bebas" style={{ fontSize: "1.2rem", letterSpacing: "1px" }}>YOUR FULL NAME</span>
                   <input className="brutal-card" style={{ padding: "16px", border: "3px solid black" }} value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required disabled={loading} placeholder="Tony Stark" />
                 </label>
+
+                <label style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                  <span className="font-bebas" style={{ fontSize: "1.2rem", letterSpacing: "1px" }}>REGISTRATION NUMBER</span>
+                  <input className="brutal-card" style={{ padding: "16px", border: "3px solid black" }} value={formData.registration_no} onChange={(e) => setFormData({ ...formData, registration_no: e.target.value })} required disabled={loading} placeholder="312xxxxxxxxx" />
+                </label>
                 
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
                   <label style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
@@ -160,10 +187,17 @@ export function AuthWorkflow() {
               </div>
             )}
             
-            <label style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <span className="font-bebas" style={{ fontSize: "1.2rem", letterSpacing: "1px" }}>CAMPUS EMAIL</span>
-              <input className="brutal-card" type="email" style={{ padding: "16px", border: "3px solid black" }} value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required disabled={loading} placeholder="id@anits.edu.in" />
-            </label>
+            {mode === "signup" || mode === "reset" ? (
+              <label style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                <span className="font-bebas" style={{ fontSize: "1.2rem", letterSpacing: "1px" }}>CAMPUS EMAIL</span>
+                <input className="brutal-card" type="email" style={{ padding: "16px", border: "3px solid black" }} value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required disabled={loading} placeholder="id@anits.edu.in" />
+              </label>
+            ) : (
+              <label style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                <span className="font-bebas" style={{ fontSize: "1.2rem", letterSpacing: "1px" }}>REGISTRATION NUMBER</span>
+                <input className="brutal-card" style={{ padding: "16px", border: "3px solid black" }} value={formData.registration_no} onChange={(e) => setFormData({ ...formData, registration_no: e.target.value })} required disabled={loading} placeholder="312xxxxxxxxx" />
+              </label>
+            )}
             
             {mode !== "reset" && (
               <label style={{ display: "flex", flexDirection: "column", gap: "8px" }}>

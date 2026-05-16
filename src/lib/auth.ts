@@ -5,6 +5,7 @@ import type { Profile, UserRole } from "@/lib/types";
 export type ProfileInput = {
   name?: string;
   email?: string;
+  registration_no?: string;
   role?: UserRole;
   department?: string;
   year?: number | string;
@@ -28,6 +29,7 @@ export function profileInputFromUser(user: User, fallback?: ProfileInput): Requi
   return {
     name: (fallback?.name ?? (metadata.full_name as string | undefined) ?? fallbackName).trim(),
     email,
+    registration_no: (fallback?.registration_no ?? (metadata.registration_no as string | undefined) ?? "").trim(),
     role: cleanRole(fallback?.role ?? metadata.role),
     department: (fallback?.department ?? (metadata.department as string | undefined) ?? "").trim(),
     year: cleanYear(fallback?.year ?? metadata.year),
@@ -53,6 +55,7 @@ export async function ensureProfile(user: User, fallback?: ProfileInput): Promis
         .update({
           name: values.name,
           email: values.email,
+          registration_no: values.registration_no,
           role: values.role,
           department: values.department,
           year: values.year,
@@ -66,6 +69,7 @@ export async function ensureProfile(user: User, fallback?: ProfileInput): Promis
         id: user.id,
         name: values.name,
         email: values.email,
+        registration_no: values.registration_no,
         role: values.role,
         department: values.department,
         year: values.year,

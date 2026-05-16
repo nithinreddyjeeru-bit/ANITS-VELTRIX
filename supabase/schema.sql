@@ -13,6 +13,7 @@ create table if not exists public.profiles (
   id            uuid primary key references auth.users(id) on delete cascade,
   name          text not null default '',
   email         text not null default '',
+  registration_no text unique,
   role          text not null default 'student' check (role in ('student','admin','club_admin')),
   department    text default '',
   year          int default 1,
@@ -51,11 +52,12 @@ create policy "profiles_insert"     on public.profiles for insert with check (au
 create or replace function public.handle_new_user()
 returns trigger language plpgsql security definer set search_path = public as $$
 begin
-  insert into public.profiles (id, name, email, role, department, year, bio)
+  insert into public.profiles (id, name, email, registration_no, role, department, year, bio)
   values (
     new.id,
     coalesce(new.raw_user_meta_data->>'full_name', split_part(new.email,'@',1)),
     new.email,
+    new.raw_user_meta_data->>'registration_no',
     coalesce(new.raw_user_meta_data->>'role', 'student'),
     coalesce(new.raw_user_meta_data->>'department', ''),
     coalesce((new.raw_user_meta_data->>'year')::int, 1),
