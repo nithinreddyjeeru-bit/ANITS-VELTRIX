@@ -20,6 +20,12 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [userId, setUserId] = useState<string | null>(null);
 
+  const generateQR = async (token: string) => {
+    const qrData = JSON.stringify({ token, event_id: id, app: "veltrix" });
+    const url = await QRCode.toDataURL(qrData, { width: 300, margin: 2, color: { dark: "#0B0B0B", light: "#FFF6E3" } });
+    setQrDataUrl(url);
+  };
+
   useEffect(() => {
     const init = async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -41,12 +47,6 @@ export default function RegisterPage() {
     };
     if (id) init();
   }, [id, router]);
-
-  const generateQR = async (token: string) => {
-    const qrData = JSON.stringify({ token, event_id: id, app: "veltrix" });
-    const url = await QRCode.toDataURL(qrData, { width: 300, margin: 2, color: { dark: "#0B0B0B", light: "#FFF6E3" } });
-    setQrDataUrl(url);
-  };
 
   const handleRegister = async () => {
     if (!userId || !event) return;

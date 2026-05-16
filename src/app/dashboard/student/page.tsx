@@ -219,11 +219,11 @@ export default function StudentDashboard() {
       <style jsx>{`
         .dash-title { font-size: clamp(2.5rem, 6vw, 4.5rem); }
         @media (max-width: 768px) {
-          .dash-header { flexDirection: column; }
-          .stats-grid { gridTemplateColumns: 1fr 1fr; }
+          .dash-header { flex-direction: column; }
+          .stats-grid { grid-template-columns: 1fr 1fr; }
         }
         @media (max-width: 480px) {
-          .stats-grid { gridTemplateColumns: 1fr; }
+          .stats-grid { grid-template-columns: 1fr; }
         }
       `}</style>
 

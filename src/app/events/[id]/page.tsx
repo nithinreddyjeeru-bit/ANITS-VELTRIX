@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import type { Event } from "@/lib/types";
@@ -241,12 +242,19 @@ export default function EventDetailPage() {
 
       {/* COMPACT HERO */}
       <section className="hero-section" style={{ 
-        background: theme.hero, 
         color: "white", 
         position: "relative",
         borderBottom: "6px solid black",
-        overflow: "hidden"
+        overflow: "hidden",
+        minHeight: "400px"
       }}>
+        {event.banner_url ? (
+          <Image src={event.banner_url} alt={event.title} fill style={{ objectFit: "cover", opacity: 0.4 }} unoptimized />
+        ) : (
+          <div style={{ position: "absolute", inset: 0, background: theme.hero, opacity: 0.8 }} />
+        )}
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent, rgba(0,0,0,0.8))" }} />
+        
         <FloatingVisuals />
         <div className="hero-container" style={{ maxWidth: "1400px", margin: "0 auto", position: "relative", zIndex: 1 }}>
           <div className="hero-content">
@@ -357,7 +365,7 @@ export default function EventDetailPage() {
           <section id="timeline">
             <div className="sticker" style={{ background: "#00F2FF", color: "black", marginBottom: "20px" }}>PROGRESSION</div>
             <h2 className="font-bangers" style={{ fontSize: "2.5rem", marginBottom: "24px" }}>BATTLE PHASES</h2>
-            <div className="timeline-container" style={{ overflowX: "auto", padding: "10px" }} className="no-scrollbar">
+            <div style={{ overflowX: "auto", padding: "10px" }} className="timeline-container no-scrollbar">
                <BattleTimeline />
             </div>
           </section>
@@ -437,7 +445,7 @@ export default function EventDetailPage() {
               <div style={{ display: "flex" }}>
                 {participants.slice(0, 4).map((p, i) => (
                   <div key={i} style={{ width: "24px", height: "24px", borderRadius: "50%", border: "1.5px solid black", marginLeft: i === 0 ? 0 : "-8px", background: "white", overflow: "hidden" }}>
-                    <img src={`https://api.dicebear.com/7.x/pixel-art/svg?seed=${p.id}`} alt="" />
+                    <Image src={`https://api.dicebear.com/7.x/pixel-art/svg?seed=${p.id}`} alt={p.name} width={40} height={40} unoptimized />
                   </div>
                 ))}
               </div>
@@ -471,8 +479,8 @@ export default function EventDetailPage() {
               {relatedEvents.map(ev => (
                 <Link key={ev.id} href={`/events/${ev.id}`} style={{ textDecoration: "none", color: "inherit", minWidth: "260px" }}>
                   <div className="brutal-card" style={{ background: "white", color: "black", padding: "16px" }}>
-                    <div style={{ height: "130px", background: "#eee", borderRadius: "10px", marginBottom: "12px", overflow: "hidden" }}>
-                      {ev.banner_url ? <img src={ev.banner_url} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <div style={{ height: "100%", background: "#f0f0f0" }} />}
+                    <div style={{ height: "130px", background: "#eee", borderRadius: "10px", marginBottom: "12px", overflow: "hidden", position: "relative" }}>
+                      {ev.banner_url ? <Image src={ev.banner_url} alt={ev.title} fill style={{ objectFit: "cover" }} unoptimized /> : <div style={{ height: "100%", background: "#f0f0f0" }} />}
                     </div>
                     <h3 className="font-bangers" style={{ fontSize: "1.2rem" }}>{ev.title}</h3>
                     <div className="font-space" style={{ opacity: 0.5, fontSize: "0.75rem", marginTop: "8px" }}>{new Date(ev.event_date).toDateString()}</div>
@@ -504,18 +512,18 @@ export default function EventDetailPage() {
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
         .hero-section { padding: 80px 60px 100px; }
-        .hero-container { display: grid; grid-template-columns: 1fr 360px; gap: 60px; alignItems: center; }
+        .hero-container { display: grid; grid-template-columns: 1fr 360px; gap: 60px; align-items: center; }
         .event-title { font-size: clamp(3rem, 6vw, 5.5rem); text-shadow: 5px 5px 0 ${theme.accent}, 10px 10px 0 black; }
         
         .main-content { grid-template-columns: 1fr 360px; gap: 60px; padding: 60px; }
         .story-column { gap: 60px; }
-        .description-text { font-size: 1.2rem; lineHeight: 1.6; opacity: 0.8; }
+        .description-text { font-size: 1.2rem; line-height: 1.6; opacity: 0.8; }
         .info-cards { grid-template-columns: 1fr 1fr; }
-        .rewards-card { padding: 48px; boxShadow: 15px 15px 0 ${theme.accent}; }
+        .rewards-card { padding: 48px; box-shadow: 15px 15px 0 ${theme.accent}; }
         .reward-icon { width: 70px; height: 70px; }
-        .reward-title { fontSize: 3rem; color: ${theme.secondary}; }
-        .prize-pool-text { fontSize: 4rem; }
-        .stat-val { fontSize: 3.5rem; }
+        .reward-title { font-size: 3rem; color: ${theme.secondary}; }
+        .prize-pool-text { font-size: 4rem; }
+        .stat-val { font-size: 3.5rem; }
         
         .action-sidebar { position: sticky; top: 100px; }
         .related-section { padding: 60px; }

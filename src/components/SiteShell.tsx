@@ -364,7 +364,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
           position: sticky; top: 0; z-index: 2000; 
         }
         .site-footer { background: var(--black); color: white; padding: 80px 60px 40px; margin-top: 100px; position: relative; }
-        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; maxWidth: 1400px; margin: 0 auto; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; max-width: 1400px; margin: 0 auto; }
         .brand-text { font-size: 3.5rem; color: var(--pink); }
         .sub-brand { color: var(--green); font-size: 1rem; letter-spacing: 3px; margin-bottom: 16px; }
         .brand-desc { opacity: 0.5; line-height: 1.6; font-size: 0.95rem; }

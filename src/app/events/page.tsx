@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import type { Event } from "@/lib/types";
@@ -56,7 +57,7 @@ function EventCard({ event, bookmarked, onBookmark, userId }: {
           style={{ background: `color-mix(in srgb, ${catColor} 14%, white)` }}
         >
           {event.banner_url ? (
-            <img src={event.banner_url} alt={event.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            <Image src={event.banner_url} alt={event.title} fill style={{ objectFit: "cover" }} unoptimized />
           ) : (
             <div className="cat-icon-wrap">
               <CatIcon size={36} strokeWidth={2.25} />
@@ -288,9 +289,9 @@ export default function EventsPage() {
 
       <style jsx>{`
         @media (max-width: 768px) {
-          .events-toolbar-row { flexDirection: column; alignItems: stretch; }
+          .events-toolbar-row { flex-direction: column; align-items: stretch; }
           .category-scroll { order: 2; width: 100%; }
-          .search-wrap { order: 1; width: 100%; minWidth: 100% !important; }
+          .search-wrap { order: 1; width: 100%; min-width: 100% !important; }
         }
       `}</style>
 
