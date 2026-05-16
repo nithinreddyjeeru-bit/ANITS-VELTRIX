@@ -48,6 +48,18 @@ const CAT_THEMES: Record<string, { hero: string, accent: string, secondary: stri
     secondary: "#FFD700",
     glow: "rgba(0, 242, 255, 0.4)"
   },
+  Gaming: { 
+    hero: "linear-gradient(180deg, #1a0232 0%, #050505 100%)", 
+    accent: "#00FF9D", 
+    secondary: "#bc00ff",
+    glow: "rgba(0, 255, 157, 0.4)"
+  },
+  Coding: { 
+    hero: "linear-gradient(180deg, #022010 0%, #050505 100%)", 
+    accent: "#00FF9D", 
+    secondary: "#FFD700",
+    glow: "rgba(0, 255, 157, 0.4)"
+  },
   Design: { 
     hero: "linear-gradient(180deg, #32022a 0%, #050505 100%)", 
     accent: "#bc00ff", 
@@ -79,10 +91,10 @@ const CAT_THEMES: Record<string, { hero: string, accent: string, secondary: stri
     glow: "rgba(0, 163, 255, 0.4)"
   },
   General: { 
-    hero: "linear-gradient(180deg, #1a1a1a 0%, #050505 100%)", 
-    accent: "#ffffff", 
-    secondary: "#00FF9D",
-    glow: "rgba(255, 255, 255, 0.2)"
+    hero: "linear-gradient(180deg, #222 0%, #050505 100%)", 
+    accent: "#00FF9D", 
+    secondary: "#FFD700",
+    glow: "rgba(0, 255, 157, 0.2)"
   }
 };
 
@@ -282,18 +294,24 @@ export default function EventDetailPage() {
         position: "sticky", top: "0", background: "white", borderBottom: "4px solid black", zIndex: 100, padding: "0 60px"
       }}>
         <div style={{ maxWidth: "1400px", margin: "0 auto", display: "flex", gap: "40px" }}>
-          {["OVERVIEW", "TIMELINE", "REWARDS", "FAQ"].map(tab => (
-            <button key={tab} 
+          {[
+            { id: "overview", label: "OVERVIEW" },
+            ...(event.rules ? [{ id: "rules", label: "RULES" }] : []),
+            { id: "timeline", label: "TIMELINE" },
+            { id: "rewards", label: "REWARDS" },
+            ...(event.contact_info ? [{ id: "contact", label: "SUPPORT" }] : [])
+          ].map(tab => (
+            <button key={tab.id} 
               onClick={() => {
-                setActiveTab(tab.toLowerCase());
-                document.getElementById(tab.toLowerCase())?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                setActiveTab(tab.id);
+                document.getElementById(tab.id)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
               }}
               style={{ 
                 padding: "20px 0", border: "none", background: "none", cursor: "pointer", position: "relative",
-                fontFamily: "Bebas Neue", fontSize: "1.2rem", color: activeTab === tab.toLowerCase() ? theme.accent : "black"
+                fontFamily: "Bebas Neue", fontSize: "1.2rem", color: activeTab === tab.id ? theme.accent : "black"
               }}>
-              {tab}
-              {activeTab === tab.toLowerCase() && <div style={{ position: "absolute", bottom: "-4px", left: 0, right: 0, height: "4px", background: theme.accent }} />}
+              {tab.label}
+              {activeTab === tab.id && <div style={{ position: "absolute", bottom: "-4px", left: 0, right: 0, height: "4px", background: theme.accent }} />}
             </button>
           ))}
         </div>
@@ -313,16 +331,27 @@ export default function EventDetailPage() {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px", marginTop: "40px" }}>
               <div className="brutal-card" style={{ padding: "30px", background: "white" }}>
                 <Rocket size={32} color={theme.accent} style={{ marginBottom: "16px" }} />
-                <h4 className="font-bangers">OBJECTIVE</h4>
-                <p className="font-space" style={{ opacity: 0.7 }}>Master the arena and collect the maximum rewards.</p>
+                <h4 className="font-bangers">MODE</h4>
+                <p className="font-space" style={{ opacity: 0.7, textTransform: "uppercase" }}>{event.mode} BATTLE</p>
               </div>
               <div className="brutal-card" style={{ padding: "30px", background: "white" }}>
-                <Info size={32} color={theme.secondary} style={{ marginBottom: "16px" }} />
-                <h4 className="font-bangers">ELIGIBILITY</h4>
-                <p className="font-space" style={{ opacity: 0.7 }}>All warriors with a valid registration number.</p>
+                <ShieldCheck size={32} color={theme.secondary} style={{ marginBottom: "16px" }} />
+                <h4 className="font-bangers">DIFFICULTY</h4>
+                <p className="font-space" style={{ opacity: 0.7, textTransform: "uppercase" }}>{event.difficulty} LEVEL</p>
               </div>
             </div>
           </section>
+
+          {event.rules && (
+            <section id="rules">
+              <div className="sticker" style={{ background: "#FFD700", color: "black", marginBottom: "24px" }}>ARENA RULES</div>
+              <div className="brutal-card" style={{ padding: "40px", background: "white", whiteSpace: "pre-wrap" }}>
+                <p className="font-space" style={{ fontSize: "1.1rem", lineHeight: 1.7, opacity: 0.9 }}>
+                  {event.rules}
+                </p>
+              </div>
+            </section>
+          )}
 
           <section id="timeline">
             <div className="sticker" style={{ background: "#00F2FF", color: "black", marginBottom: "24px" }}>PROGRESSION</div>
@@ -335,36 +364,31 @@ export default function EventDetailPage() {
               <div style={{ background: theme.accent, width: "80px", height: "80px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 30px" }}>
                 <Award size={48} color="black" />
               </div>
-              <h2 className="font-bangers" style={{ fontSize: "3.5rem", color: theme.secondary }}>MISSION REWARDS</h2>
+              <h2 className="font-bangers" style={{ fontSize: "3.5rem", color: theme.secondary }}>
+                {event.prize_pool ? "PRIZE POOL" : "MISSION REWARDS"}
+              </h2>
+              {event.prize_pool && (
+                <div className="font-bangers" style={{ fontSize: "4.5rem", color: "white", margin: "20px 0", textShadow: `0 0 20px ${theme.glow}` }}>
+                  {event.prize_pool}
+                </div>
+              )}
               <div style={{ display: "flex", justifyContent: "center", gap: "40px", margin: "40px 0" }}>
                 <div><div className="font-bangers" style={{ fontSize: "4rem" }}>+{event.xp_reward}</div><div className="font-bebas">XP</div></div>
                 <div style={{ width: "2px", background: "rgba(255,255,255,0.2)" }} />
-                <div><div className="font-bangers" style={{ fontSize: "4rem" }}>1</div><div className="font-bebas">BADGE</div></div>
-              </div>
-              <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
-                <span className="sticker" style={{ background: "white", color: "black" }}>CERTIFICATE</span>
-                <span className="sticker" style={{ background: theme.accent, color: "white" }}>RANK UP</span>
+                <div><div className="font-bangers" style={{ fontSize: "4rem" }}>1</div><div className="font-bebas">ACHIEVEMENT</div></div>
               </div>
             </div>
           </section>
 
-          <section id="faq">
-             <div className="sticker" style={{ background: "var(--pink)", color: "white", marginBottom: "24px" }}>INTEL / FAQ</div>
-             <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-                {[
-                  ["Is team registration mandatory?", "No, you can join as an individual or part of a squad."],
-                  ["When will I get my XP?", "XP is automatically credited after attendance scan."],
-                  ["Can I cancel my registration?", "Yes, up to 24 hours before the event commencement."]
-                ].map(([q, a], i) => (
-                  <div key={i} className="brutal-card" style={{ padding: "24px", background: "white" }}>
-                    <div className="font-bangers" style={{ fontSize: "1.2rem", display: "flex", alignItems: "center", gap: "10px" }}>
-                      <HelpCircle size={18} color={theme.accent} /> {q}
-                    </div>
-                    <p className="font-space" style={{ marginTop: "10px", opacity: 0.7 }}>{a}</p>
-                  </div>
-                ))}
-             </div>
-          </section>
+          {event.contact_info && (
+            <section id="contact">
+               <div className="sticker" style={{ background: theme.accent, color: "black", marginBottom: "24px" }}>SUPPORT / INTEL</div>
+               <div className="brutal-card" style={{ padding: "30px", background: "white" }}>
+                  <div className="font-bebas" style={{ opacity: 0.5, marginBottom: "10px" }}>CONTACT COORDINATORS</div>
+                  <p className="font-space" style={{ fontSize: "1.2rem" }}>{event.contact_info}</p>
+               </div>
+            </section>
+          )}
         </div>
 
         {/* RIGHT COLUMN — STICKY ACTION PANEL */}
