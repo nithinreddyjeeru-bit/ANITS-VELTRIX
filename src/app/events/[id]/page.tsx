@@ -235,7 +235,8 @@ export default function EventDetailPage() {
   const categoryColor = CAT_COLORS[event.category] || "var(--green)";
   const CategoryIcon = getCategoryIcon(event.category);
 
-  return     <div className="event-detail-page" style={{ position: "relative", background: "#f8f8f8" }}>
+  return (
+    <div className="event-detail-page" style={{ position: "relative", background: "#f8f8f8" }}>
       <div className="dynamic-bg" style={{ opacity: 0.3 }} />
       
       {/* HERO SECTION */}
@@ -557,16 +558,7 @@ export default function EventDetailPage() {
 
         </div>
       </div>
-iv>
-          </div>
 
-          {/* TEAM PORTAL (Optional) */}
-          {event.is_team_event && (
-             <TeamPortal eventId={id} maxSize={event.team_size || 4} isRegistered={isRegistered} />
-          )}
-
-        </div>
-      </div>
 
       {/* SIMILAR EVENTS SECTION */}
       {relatedEvents.length > 0 && (
