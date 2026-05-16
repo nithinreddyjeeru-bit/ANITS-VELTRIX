@@ -103,6 +103,12 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
+
   if (!isLoaded) return (
     <div className="loading-screen">
       <motion.span
@@ -114,6 +120,22 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
       </motion.span>
     </div>
   );
+
+  const navLinks = isLoggedIn
+    ? [
+        ["DASHBOARD", dashHref],
+        ["EVENTS", "/events"],
+        ["CLUBS", "/clubs"],
+        ["LEADERBOARD", "/leaderboard"],
+        ["ABOUT", "/about"],
+      ]
+    : [
+        ["HOME", "/"],
+        ["EVENTS", "/events"],
+        ["CLUBS", "/clubs"],
+        ["LEADERBOARD", "/leaderboard"],
+        ["ABOUT", "/about"],
+      ];
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
@@ -136,29 +158,14 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
       </div>
 
       {/* Navbar */}
-      <nav className="navbar">
-        <Link href="/" style={{ textDecoration: "none" }}>
+      <nav className="navbar" style={{ position: "relative" }}>
+        <Link href="/" style={{ textDecoration: "none" }} onClick={() => setMobileMenuOpen(false)}>
           <VeltrixLogo />
         </Link>
 
-        {/* Nav Links */}
-        <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", alignItems: "center" }}>
-          {(isLoggedIn
-            ? [
-                ["DASHBOARD", dashHref],
-                ["EVENTS", "/events"],
-                ["CLUBS", "/clubs"],
-                ["LEADERBOARD", "/leaderboard"],
-                ["ABOUT", "/about"],
-              ]
-            : [
-                ["HOME", "/"],
-                ["EVENTS", "/events"],
-                ["CLUBS", "/clubs"],
-                ["LEADERBOARD", "/leaderboard"],
-                ["ABOUT", "/about"],
-              ]
-          ).map(([label, href]) => (
+        {/* Desktop Nav Links */}
+        <div className="desktop-nav" style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+          {navLinks.map(([label, href]) => (
             <Link
               key={href}
               href={href}
@@ -170,8 +177,8 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
           ))}
         </div>
 
-        {/* Auth actions */}
-        <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+        {/* Auth actions & Mobile Toggle */}
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -179,6 +186,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
               if (q) router.push(`/events?q=${encodeURIComponent(q)}`);
               else router.push("/events");
             }}
+            className="desktop-nav"
             style={{ display: "flex", alignItems: "center", gap: "6px" }}
           >
             <input
@@ -188,7 +196,6 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
               className="font-space"
               style={{
                 width: "120px",
-                maxWidth: "22vw",
                 padding: "8px 10px",
                 border: "3px solid white",
                 background: "rgba(0,0,0,0.25)",
@@ -205,26 +212,68 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
               <Search size={18} />
             </button>
           </form>
-          {isLoggedIn ? (
-            <>
-              <Link href="/notifications" className="btn" style={{ fontSize: "0.95rem", padding: "8px 16px" }}>
-                ALERTS
-              </Link>
-              <button type="button" onClick={() => signOut()} className="btn btn-pink" style={{ fontSize: "0.95rem", padding: "8px 16px" }}>
-                OUT
-              </button>
-            </>
-          ) : (
-            <>
-              <Link href="/auth" className="btn btn-green" style={{ fontSize: "0.95rem", padding: "8px 16px" }}>
-                <LogIn size={16} /> LOGIN
-              </Link>
-              <Link href="/auth" className="btn" style={{ fontSize: "0.95rem", padding: "8px 16px" }}>
-                <UserPlus size={16} /> SIGN UP
-              </Link>
-            </>
-          )}
+
+          <div className="desktop-nav" style={{ display: "flex", gap: "10px" }}>
+            {isLoggedIn ? (
+              <>
+                <Link href="/notifications" className="btn" style={{ fontSize: "0.9rem", padding: "8px 14px" }}>
+                  ALERTS
+                </Link>
+                <button type="button" onClick={() => signOut()} className="btn btn-pink" style={{ fontSize: "0.9rem", padding: "8px 14px" }}>
+                  OUT
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/auth" className="btn btn-green" style={{ fontSize: "0.9rem", padding: "8px 14px" }}>
+                  LOGIN
+                </Link>
+                <Link href="/auth" className="btn" style={{ fontSize: "0.9rem", padding: "8px 14px" }}>
+                  SIGN UP
+                </Link>
+              </>
+            )}
+          </div>
+
+          <button 
+            className="mobile-toggle btn" 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            style={{ padding: "8px 12px", minWidth: "auto" }}
+          >
+            <div style={{ display: "flex", flexDirection: "column", gap: "4px", width: "20px" }}>
+              <div style={{ height: "3px", background: "white", width: "100%" }} />
+              <div style={{ height: "3px", background: "white", width: "100%" }} />
+              <div style={{ height: "3px", background: "white", width: "100%" }} />
+            </div>
+          </button>
         </div>
+
+        {/* Mobile Menu Overlay */}
+        {mobileMenuOpen && (
+          <div style={{ 
+            position: "fixed", top: "115px", left: 0, right: 0, bottom: 0, 
+            background: "var(--black)", zIndex: 1000, padding: "40px 20px",
+            display: "flex", flexDirection: "column", gap: "20px"
+          }}>
+            {navLinks.map(([label, href]) => (
+              <Link key={href} href={href} className="font-bangers" style={{ fontSize: "2rem", color: "white", textDecoration: "none" }}>
+                {label}
+              </Link>
+            ))}
+            <div style={{ height: "2px", background: "rgba(255,255,255,0.1)", margin: "10px 0" }} />
+            {isLoggedIn ? (
+              <div style={{ display: "flex", gap: "10px" }}>
+                <Link href="/notifications" className="btn" style={{ flex: 1 }}>ALERTS</Link>
+                <button onClick={() => signOut()} className="btn btn-pink" style={{ flex: 1 }}>LOGOUT</button>
+              </div>
+            ) : (
+              <div style={{ display: "flex", gap: "10px" }}>
+                <Link href="/auth" className="btn btn-green" style={{ flex: 1 }}>LOGIN</Link>
+                <Link href="/auth" className="btn" style={{ flex: 1 }}>SIGN UP</Link>
+              </div>
+            )}
+          </div>
+        )}
       </nav>
 
       {/* Main Content */}
@@ -239,14 +288,14 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
 
       {/* Footer */}
       {!isHome && (
-        <footer style={{ background: "var(--black)", color: "white", padding: "80px 60px 40px", marginTop: "100px", position: "relative" }}>
+        <footer className="site-footer">
           <div className="zigzag-bar" style={{ position: "absolute", top: 0, left: 0, right: 0 }} />
 
-          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: "60px", maxWidth: "1400px", margin: "0 auto" }}>
-            <div>
-              <div className="font-bangers" style={{ fontSize: "3rem", color: "var(--pink)" }}>VELTRIX</div>
-              <div className="font-bebas" style={{ color: "var(--green)", fontSize: "1rem", letterSpacing: "3px", marginBottom: "16px" }}>CAMPUS UNIVERSE</div>
-              <p className="font-space" style={{ opacity: 0.5, lineHeight: 1.6, fontSize: "0.95rem" }}>
+          <div className="footer-grid">
+            <div className="footer-brand">
+              <div className="font-bangers brand-text">VELTRIX</div>
+              <div className="font-bebas sub-brand">CAMPUS UNIVERSE</div>
+              <p className="font-space brand-desc">
                 The ultimate futuristic comic-book campus universe. Built for the next generation of innovators at ANITS.
               </p>
             </div>
@@ -256,29 +305,58 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
               { title: "COMMUNITY", links: ["Leaderboards", "Certificates", "XP System", "Teams"] },
               { title: "LEGAL", links: ["Privacy Policy", "Terms of Use", "Contact Us", "About"] },
             ].map((col) => (
-              <div key={col.title}>
-                <h4 className="font-bebas" style={{ fontSize: "1.3rem", color: "var(--green)", marginBottom: "20px", letterSpacing: "2px" }}>{col.title}</h4>
-                <ul className="font-space" style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "10px" }}>
+              <div key={col.title} className="footer-col">
+                <h4 className="font-bebas col-title">{col.title}</h4>
+                <ul className="font-space footer-links">
                   {col.links.map((l) => (
-                    <li key={l} style={{ opacity: 0.5, fontSize: "0.95rem", cursor: "pointer", transition: "opacity 0.2s" }}
-                      onMouseEnter={e => (e.currentTarget.style.opacity = "1")}
-                      onMouseLeave={e => (e.currentTarget.style.opacity = "0.5")}
-                    >{l}</li>
+                    <li key={l} className="footer-li">{l}</li>
                   ))}
                 </ul>
               </div>
             ))}
           </div>
 
-          <div style={{ borderTop: "1px solid #222", marginTop: "60px", paddingTop: "24px", display: "flex", justifyContent: "space-between", opacity: 0.35 }} className="font-space">
-            <p style={{ fontSize: "0.85rem" }}>© 2026 VELTRIX UNIVERSE · ANITS · ALL RIGHTS RESERVED</p>
-            <div style={{ display: "flex", gap: "30px", fontSize: "0.85rem" }}>
+          <div className="footer-bottom font-space">
+            <p className="copy-text">© 2026 VELTRIX UNIVERSE · ANITS · ALL RIGHTS RESERVED</p>
+            <div className="legal-links">
               <span>PRIVACY.EXE</span>
               <span>TERMS.CMD</span>
             </div>
           </div>
         </footer>
       )}
+
+      <style jsx>{`
+        .site-footer { background: var(--black); color: white; padding: 80px 60px 40px; marginTop: 100px; position: relative; }
+        .footer-grid { display: grid; gridTemplateColumns: 2fr 1fr 1fr 1fr; gap: 60px; maxWidth: 1400px; margin: 0 auto; }
+        .brand-text { fontSize: 3.5rem; color: var(--pink); }
+        .sub-brand { color: var(--green); fontSize: 1rem; letterSpacing: 3px; marginBottom: 16px; }
+        .brand-desc { opacity: 0.5; lineHeight: 1.6; fontSize: 0.95rem; }
+        .col-title { fontSize: 1.3rem; color: var(--green); marginBottom: 20px; letterSpacing: 2px; }
+        .footer-links { listStyle: none; display: flex; flexDirection: column; gap: 10px; padding: 0; }
+        .footer-li { opacity: 0.5; fontSize: 0.95rem; cursor: pointer; transition: opacity 0.2s; }
+        .footer-li:hover { opacity: 1; }
+        .footer-bottom { borderTop: 1px solid #222; marginTop: 60px; paddingTop: 24px; display: flex; justifyContent: space-between; opacity: 0.35; fontSize: 0.85rem; }
+        .legal-links { display: flex; gap: 30px; }
+
+        @media (max-width: 1024px) {
+          .desktop-nav { display: none !important; }
+          .mobile-toggle { display: block !important; }
+          .footer-grid { gridTemplateColumns: 1fr 1fr; gap: 40px; }
+          .site-footer { padding: 60px 20px 40px; }
+        }
+
+        @media (max-width: 640px) {
+          .footer-grid { gridTemplateColumns: 1fr; }
+          .footer-bottom { flexDirection: column; gap: 20px; textAlign: center; }
+          .legal-links { justifyContent: center; }
+          .brand-text { fontSize: 2.5rem; }
+        }
+
+        @media (min-width: 1025px) {
+          .mobile-toggle { display: none !important; }
+        }
+      `}</style>
     </div>
   );
 }

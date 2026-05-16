@@ -155,68 +155,77 @@ export default function StudentDashboard() {
   );
 
   return (
-    <div style={{ padding: "clamp(20px, 5vw, 60px) clamp(20px, 5vw, 60px) 100px" }}>
+    <div style={{ padding: "clamp(20px, 5vw, 60px) clamp(20px, 4vw, 40px) 100px" }}>
       {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: "50px", flexWrap: "wrap", gap: "20px" }}>
-        <div>
+      <div className="dash-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: "50px", gap: "24px" }}>
+        <div style={{ flex: 1 }}>
           <div className="sticker" style={{ marginBottom: "16px" }}>WELCOME BACK</div>
-          <h1 className="font-bangers" style={{ fontSize: "clamp(2.5rem, 6vw, 5rem)", lineHeight: 1 }}>
+          <h1 className="font-bangers dash-title" style={{ lineHeight: 1 }}>
             {profile.name?.toUpperCase() || "STUDENT"}
           </h1>
-          <div className="font-bebas" style={{ fontSize: "1.2rem", opacity: 0.85, letterSpacing: "3px", marginTop: "4px" }}>
+          <div className="font-bebas" style={{ fontSize: "1.1rem", opacity: 0.85, letterSpacing: "3px", marginTop: "4px" }}>
             {profile.department || "VELTRIX STUDENT"} · LEVEL {profile.level ?? 1}
           </div>
           {/* XP bar */}
-          <div style={{ marginTop: "16px", maxWidth: "400px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
+          <div style={{ marginTop: "20px", maxWidth: "400px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>
               <span className="font-bebas" style={{ fontSize: "0.85rem", opacity: 0.85 }}>{profile.xp ?? 0} XP</span>
               <span className="font-bebas" style={{ fontSize: "0.85rem", opacity: 0.85 }}>LVL {(profile.level ?? 1) + 1}: {(profile.level ?? 1) * 1000} XP</span>
             </div>
-            <div style={{ background: "#ddd", height: "10px", border: "2px solid var(--black)" }}>
+            <div style={{ background: "#ddd", height: "8px", border: "2px solid var(--black)", borderRadius: "4px", overflow: "hidden" }}>
               <motion.div initial={{ width: 0 }} animate={{ width: `${xpProgress}%` }} transition={{ duration: 1, delay: 0.5 }}
                 style={{ height: "100%", background: "var(--green)" }} />
-            </div>
-            <div className="font-space" style={{ fontSize: "0.8rem", opacity: 0.85, marginTop: "4px" }}>
-              {xpToNextLevel} XP to next level
             </div>
           </div>
         </div>
 
-        <div style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
-          <Link href="/settings" className="btn" style={{ padding: "10px" }}><Settings size={20} /></Link>
-          <button onClick={signOut} className="btn btn-pink" style={{ padding: "10px 20px", fontSize: "0.9rem" }}>
-            <LogOut size={16} /> SIGN OUT
+        <div style={{ display: "flex", gap: "10px" }}>
+          <Link href="/settings" className="btn" style={{ padding: "10px" }} aria-label="Settings"><Settings size={18} /></Link>
+          <button onClick={signOut} className="btn btn-pink" style={{ padding: "8px 16px", fontSize: "0.85rem" }}>
+            OUT
           </button>
         </div>
       </div>
 
       {/* Stats grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "24px", marginBottom: "50px" }}>
-        <StatCard label="XP POINTS" value={(profile.xp ?? 0).toLocaleString()} icon={<Zap size={32} />} color="var(--green)" />
-        <StatCard label="GLOBAL RANK" value={myRank ? `#${myRank}` : "—"} icon={<Trophy size={32} />} color="var(--black)" />
-        <StatCard label="EVENTS JOINED" value={registrations.length} icon={<Calendar size={32} />} color="var(--pink)" />
-        <StatCard label="CERTIFICATES" value={certificates.length} icon={<Award size={32} />} color="var(--blue)" />
+      <div className="stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "20px", marginBottom: "40px" }}>
+        <StatCard label="XP POINTS" value={(profile.xp ?? 0).toLocaleString()} icon={<Zap size={28} />} color="var(--green)" />
+        <StatCard label="GLOBAL RANK" value={myRank ? `#${myRank}` : "—"} icon={<Trophy size={28} />} color="var(--black)" />
+        <StatCard label="EVENTS JOINED" value={registrations.length} icon={<Calendar size={28} />} color="var(--pink)" />
+        <StatCard label="CERTIFICATES" value={certificates.length} icon={<Award size={28} />} color="var(--blue)" />
       </div>
 
       {/* Tab Navigation */}
-      <div style={{ display: "flex", gap: "8px", marginBottom: "32px", flexWrap: "wrap" }}>
+      <div className="tabs-container no-scrollbar" style={{ display: "flex", gap: "8px", marginBottom: "32px", overflowX: "auto", paddingBottom: "8px" }}>
         {[
-          { key: "events", label: `EVENTS (${registrations.length})`, icon: <Calendar size={16} /> },
-          { key: "certificates", label: `CERTS (${certificates.length})`, icon: <Award size={16} /> },
-          { key: "bookmarks", label: `SAVED (${bookmarks.length})`, icon: <Bookmark size={16} /> },
-          { key: "notifications", label: `ALERTS ${unread > 0 ? `(${unread})` : ""}`, icon: <Bell size={16} /> },
+          { key: "events", label: `EVENTS (${registrations.length})`, icon: <Calendar size={14} /> },
+          { key: "certificates", label: `CERTS (${certificates.length})`, icon: <Award size={14} /> },
+          { key: "bookmarks", label: `SAVED (${bookmarks.length})`, icon: <Bookmark size={14} /> },
+          { key: "notifications", label: `ALERTS ${unread > 0 ? `(${unread})` : ""}`, icon: <Bell size={14} /> },
         ].map(tab => (
           <button key={tab.key} onClick={() => setActiveTab(tab.key as any)}
             className="btn" style={{
-              fontSize: "0.9rem", padding: "8px 18px",
+              fontSize: "0.85rem", padding: "8px 16px",
               background: activeTab === tab.key ? "var(--black)" : "white",
               color: activeTab === tab.key ? "white" : "var(--black)",
-              display: "flex", alignItems: "center", gap: "8px"
+              display: "flex", alignItems: "center", gap: "8px",
+              whiteSpace: "nowrap"
             }}>
             {tab.icon} {tab.label}
           </button>
         ))}
       </div>
+
+      <style jsx>{`
+        .dash-title { font-size: clamp(2.5rem, 6vw, 4.5rem); }
+        @media (max-width: 768px) {
+          .dash-header { flexDirection: column; }
+          .stats-grid { gridTemplateColumns: 1fr 1fr; }
+        }
+        @media (max-width: 480px) {
+          .stats-grid { gridTemplateColumns: 1fr; }
+        }
+      `}</style>
 
       {/* Tab content */}
       {activeTab === "events" && (

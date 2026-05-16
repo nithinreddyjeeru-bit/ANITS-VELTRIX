@@ -255,20 +255,21 @@ export default function EventsPage() {
       <section className="events-toolbar">
         <div className="events-toolbar-row">
           {/* Category pills */}
-          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+          <div className="category-scroll no-scrollbar" style={{ display: "flex", gap: "10px", overflowX: "auto", paddingBottom: "5px", flex: 1 }}>
             {CATEGORIES.map(cat => (
               <button key={cat} onClick={() => setCategory(cat)}
                 className="btn" style={{
-                  fontSize: "0.9rem", padding: "6px 16px",
+                  fontSize: "0.85rem", padding: "6px 14px",
                   background: category === cat ? "var(--green)" : "white",
-                  color: category === cat ? "var(--black)" : "var(--black)",
+                  color: "var(--black)",
+                  whiteSpace: "nowrap"
                 }}>
                 {cat}
               </button>
             ))}
           </div>
           {/* Search */}
-          <div style={{ position: "relative", minWidth: "280px" }}>
+          <div className="search-wrap" style={{ position: "relative", flex: "1 1 300px" }}>
             <Search style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: "white", opacity: 0.5 }} size={18} />
             <input
               className="font-space"
@@ -284,6 +285,14 @@ export default function EventsPage() {
           </div>
         </div>
       </section>
+
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .events-toolbar-row { flexDirection: column; alignItems: stretch; }
+          .category-scroll { order: 2; width: 100%; }
+          .search-wrap { order: 1; width: 100%; minWidth: 100% !important; }
+        }
+      `}</style>
 
       {/* EVENT GRID */}
       {loading ? (
