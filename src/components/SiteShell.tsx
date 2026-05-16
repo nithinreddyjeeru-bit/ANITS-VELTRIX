@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useVeltrix } from "@/lib/store";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Search, LogIn, UserPlus } from "lucide-react";
 import { dashboardPathForRole } from "@/lib/auth-redirect";
 import { supabase } from "@/lib/supabase";
