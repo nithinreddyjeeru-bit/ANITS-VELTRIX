@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { dashboardPathForRole } from "@/lib/auth-redirect";
 import { ensureProfile } from "@/lib/auth";
+import { motion } from "framer-motion";
 
 export function AuthWorkflow() {
   const [mode, setMode] = useState<"login" | "signup" | "reset">("login");
