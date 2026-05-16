@@ -158,7 +158,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
       </div>
 
       {/* Navbar */}
-      <nav className="navbar" style={{ position: "relative" }}>
+      <nav className="navbar">
         <Link href="/" style={{ textDecoration: "none" }} onClick={() => setMobileMenuOpen(false)}>
           <VeltrixLogo />
         </Link>
@@ -238,42 +238,72 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
           <button 
             className="mobile-toggle btn" 
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            style={{ padding: "8px 12px", minWidth: "auto" }}
+            style={{ padding: "8px 12px", minWidth: "auto", background: mobileMenuOpen ? "var(--pink)" : "white" }}
           >
             <div style={{ display: "flex", flexDirection: "column", gap: "4px", width: "20px" }}>
-              <div style={{ height: "3px", background: "white", width: "100%" }} />
-              <div style={{ height: "3px", background: "white", width: "100%" }} />
-              <div style={{ height: "3px", background: "white", width: "100%" }} />
+              <div style={{ height: "3px", background: mobileMenuOpen ? "white" : "black", width: "100%" }} />
+              <div style={{ height: "3px", background: mobileMenuOpen ? "white" : "black", width: "100%" }} />
+              <div style={{ height: "3px", background: mobileMenuOpen ? "white" : "black", width: "100%" }} />
             </div>
           </button>
         </div>
 
         {/* Mobile Menu Overlay */}
-        {mobileMenuOpen && (
-          <div style={{ 
-            position: "fixed", top: "115px", left: 0, right: 0, bottom: 0, 
-            background: "var(--black)", zIndex: 1000, padding: "40px 20px",
-            display: "flex", flexDirection: "column", gap: "20px"
-          }}>
-            {navLinks.map(([label, href]) => (
-              <Link key={href} href={href} className="font-bangers" style={{ fontSize: "2rem", color: "white", textDecoration: "none" }}>
-                {label}
-              </Link>
-            ))}
-            <div style={{ height: "2px", background: "rgba(255,255,255,0.1)", margin: "10px 0" }} />
-            {isLoggedIn ? (
-              <div style={{ display: "flex", gap: "10px" }}>
-                <Link href="/notifications" className="btn" style={{ flex: 1 }}>ALERTS</Link>
-                <button onClick={() => signOut()} className="btn btn-pink" style={{ flex: 1 }}>LOGOUT</button>
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              style={{ 
+                position: "fixed", top: "72px", left: 0, right: 0, bottom: 0, 
+                background: "var(--black)", zIndex: 1000, padding: "40px 20px",
+                display: "flex", flexDirection: "column", gap: "20px",
+                borderTop: "4px solid var(--pink)"
+              }}
+            >
+              {navLinks.map(([label, href]) => (
+                <Link key={href} href={href} className="font-bangers" 
+                  style={{ fontSize: "2.5rem", color: "white", textDecoration: "none" }}
+                  onClick={() => setMobileMenuOpen(false)}>
+                  {label}
+                </Link>
+              ))}
+              <div style={{ height: "2px", background: "rgba(255,255,255,0.1)", margin: "10px 0" }} />
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const q = searchQ.trim();
+                    if (q) router.push(`/events?q=${encodeURIComponent(q)}`);
+                    setMobileMenuOpen(false);
+                  }}
+                  style={{ display: "flex", gap: "8px" }}
+                >
+                  <input
+                    value={searchQ}
+                    onChange={(e) => setSearchQ(e.target.value)}
+                    placeholder="Search Events..."
+                    className="font-space"
+                    style={{ flex: 1, padding: "12px", border: "3px solid white", background: "transparent", color: "white" }}
+                  />
+                  <button type="submit" className="btn btn-green"><Search /></button>
+                </form>
+                {isLoggedIn ? (
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    <Link href="/notifications" className="btn" style={{ flex: 1 }} onClick={() => setMobileMenuOpen(false)}>ALERTS</Link>
+                    <button onClick={() => { signOut(); setMobileMenuOpen(false); }} className="btn btn-pink" style={{ flex: 1 }}>LOGOUT</button>
+                  </div>
+                ) : (
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    <Link href="/auth" className="btn btn-green" style={{ flex: 1 }} onClick={() => setMobileMenuOpen(false)}>LOGIN</Link>
+                    <Link href="/auth" className="btn" style={{ flex: 1 }} onClick={() => setMobileMenuOpen(false)}>SIGN UP</Link>
+                  </div>
+                )}
               </div>
-            ) : (
-              <div style={{ display: "flex", gap: "10px" }}>
-                <Link href="/auth" className="btn btn-green" style={{ flex: 1 }}>LOGIN</Link>
-                <Link href="/auth" className="btn" style={{ flex: 1 }}>SIGN UP</Link>
-              </div>
-            )}
-          </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       {/* Main Content */}
@@ -327,30 +357,37 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
       )}
 
       <style jsx>{`
-        .site-footer { background: var(--black); color: white; padding: 80px 60px 40px; marginTop: 100px; position: relative; }
-        .footer-grid { display: grid; gridTemplateColumns: 2fr 1fr 1fr 1fr; gap: 60px; maxWidth: 1400px; margin: 0 auto; }
-        .brand-text { fontSize: 3.5rem; color: var(--pink); }
-        .sub-brand { color: var(--green); fontSize: 1rem; letterSpacing: 3px; marginBottom: 16px; }
-        .brand-desc { opacity: 0.5; lineHeight: 1.6; fontSize: 0.95rem; }
-        .col-title { fontSize: 1.3rem; color: var(--green); marginBottom: 20px; letterSpacing: 2px; }
-        .footer-links { listStyle: none; display: flex; flexDirection: column; gap: 10px; padding: 0; }
-        .footer-li { opacity: 0.5; fontSize: 0.95rem; cursor: pointer; transition: opacity 0.2s; }
+        .navbar { 
+          background: var(--black); color: white; display: flex; 
+          align-items: center; justify-content: space-between; 
+          padding: 14px 60px; border-bottom: var(--border); 
+          position: sticky; top: 0; z-index: 2000; 
+        }
+        .site-footer { background: var(--black); color: white; padding: 80px 60px 40px; margin-top: 100px; position: relative; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; maxWidth: 1400px; margin: 0 auto; }
+        .brand-text { font-size: 3.5rem; color: var(--pink); }
+        .sub-brand { color: var(--green); font-size: 1rem; letter-spacing: 3px; margin-bottom: 16px; }
+        .brand-desc { opacity: 0.5; line-height: 1.6; font-size: 0.95rem; }
+        .col-title { font-size: 1.3rem; color: var(--green); margin-bottom: 20px; letter-spacing: 2px; }
+        .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; padding: 0; }
+        .footer-li { opacity: 0.5; font-size: 0.95rem; cursor: pointer; transition: opacity 0.2s; }
         .footer-li:hover { opacity: 1; }
-        .footer-bottom { borderTop: 1px solid #222; marginTop: 60px; paddingTop: 24px; display: flex; justifyContent: space-between; opacity: 0.35; fontSize: 0.85rem; }
+        .footer-bottom { border-top: 1px solid #222; margin-top: 60px; padding-top: 24px; display: flex; justify-content: space-between; opacity: 0.35; font-size: 0.85rem; }
         .legal-links { display: flex; gap: 30px; }
 
         @media (max-width: 1024px) {
+          .navbar { padding: 12px 20px; }
           .desktop-nav { display: none !important; }
           .mobile-toggle { display: block !important; }
-          .footer-grid { gridTemplateColumns: 1fr 1fr; gap: 40px; }
+          .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
           .site-footer { padding: 60px 20px 40px; }
         }
 
         @media (max-width: 640px) {
-          .footer-grid { gridTemplateColumns: 1fr; }
-          .footer-bottom { flexDirection: column; gap: 20px; textAlign: center; }
-          .legal-links { justifyContent: center; }
-          .brand-text { fontSize: 2.5rem; }
+          .footer-grid { grid-template-columns: 1fr; }
+          .footer-bottom { flex-direction: column; gap: 20px; text-align: center; }
+          .legal-links { justify-content: center; }
+          .brand-text { font-size: 2.5rem; }
         }
 
         @media (min-width: 1025px) {
