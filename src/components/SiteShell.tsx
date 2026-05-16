@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { Search, LogIn, UserPlus } from "lucide-react";
 import { dashboardPathForRole } from "@/lib/auth-redirect";
 import { supabase } from "@/lib/supabase";
+import VeltrixLogo from "./VeltrixLogo";
 
 type TickerItem = {
   label: string;
@@ -136,23 +137,8 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
 
       {/* Navbar */}
       <nav className="navbar">
-        {/* Logo */}
-        <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "12px" }}>
-          <motion.div
-            whileHover={{ rotate: 10, scale: 1.1 }}
-            style={{
-              background: "var(--green)", color: "var(--black)",
-              border: "3px solid white", padding: "4px 12px",
-              fontFamily: "Bangers, system-ui", fontSize: "1.8rem",
-              boxShadow: "4px 4px 0 white"
-            }}
-          >
-            ⚡
-          </motion.div>
-          <div>
-            <div className="font-bangers" style={{ fontSize: "1.6rem", lineHeight: 1, color: "white" }}>ANITS</div>
-            <div className="font-bebas" style={{ fontSize: "0.9rem", color: "var(--green)", letterSpacing: "3px" }}>VELTRIX UNIVERSE</div>
-          </div>
+        <Link href="/" style={{ textDecoration: "none" }}>
+          <VeltrixLogo />
         </Link>
 
         {/* Nav Links */}

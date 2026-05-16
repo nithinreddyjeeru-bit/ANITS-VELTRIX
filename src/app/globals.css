@@ -408,7 +408,7 @@ footer .btn-black {
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
   gap: 48px;
-  align-items: end;
+  align-items: center;
 }
 .hero-kicker {
   display: inline-block;
@@ -1263,3 +1263,12 @@ footer .btn-black {
 .animate-float { animation:float 3s ease-in-out infinite; }
 .speech-bubble { background:white; border:var(--border); padding:20px 24px; position:relative; display:inline-block; }
 .speech-bubble::after { content:''; position:absolute; bottom:-18px; left:28px; border:18px solid transparent; border-top-color:var(--black); border-bottom:none; }
+
+@keyframes flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+  20%, 22%, 24%, 55% { opacity: 0.4; }
+}
+
+.lightning-flicker {
+  animation: flicker 0.3s infinite;
+}
