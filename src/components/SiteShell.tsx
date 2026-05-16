@@ -319,7 +319,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
       {/* Footer */}
       {!isHome && (
         <footer className="site-footer">
-          <div className="zigzag-bar" style={{ position: "absolute", top: 0, left: 0, right: 0 }} />
+          <div className="zigzag-bar" style={{ position: "absolute", top: "-27px", left: 0, right: 0, background: "var(--cream)", zIndex: 5 }} />
 
           <div className="footer-grid">
             <div className="footer-brand">
