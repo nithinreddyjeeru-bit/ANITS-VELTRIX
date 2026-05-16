@@ -360,10 +360,10 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
         .navbar { 
           background: var(--black); color: white; display: flex; 
           align-items: center; justify-content: space-between; 
-          padding: 14px 60px; border-bottom: var(--border); 
+          padding: 14px var(--side-padding); border-bottom: var(--border); 
           position: sticky; top: 0; z-index: 2000; 
         }
-        .site-footer { background: var(--black); color: white; padding: 80px 60px 40px; margin-top: 100px; position: relative; }
+        .site-footer { background: var(--black); color: white; padding: 80px var(--side-padding) 40px; margin-top: 100px; position: relative; }
         .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; max-width: 1400px; margin: 0 auto; }
         .brand-text { font-size: 3.5rem; color: var(--pink); }
         .sub-brand { color: var(--green); font-size: 1rem; letter-spacing: 3px; margin-bottom: 16px; }

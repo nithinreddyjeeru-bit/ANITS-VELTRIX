@@ -19,7 +19,7 @@ export default function ClubsPage() {
         copy="Coding, robotics, dance, esports, and culture clubs — live from Supabase."
       />
 
-      <section style={{ padding: "0 clamp(16px, 4vw, 60px) 100px" }}>
+      <section style={{ padding: "0 var(--side-padding) 100px" }}>
         <div className="brutal-card clubs-toolbar" style={{ padding: "20px", marginBottom: "32px", display: "flex", gap: "16px", flexWrap: "wrap", alignItems: "center" }}>
           <input
             className="font-space"

@@ -511,11 +511,11 @@ export default function EventDetailPage() {
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        .hero-section { padding: 80px 60px 100px; }
+        .hero-section { padding: 80px var(--side-padding) 100px; }
         .hero-container { display: grid; grid-template-columns: 1fr 360px; gap: 60px; align-items: center; }
         .event-title { font-size: clamp(3rem, 6vw, 5.5rem); text-shadow: 5px 5px 0 ${theme.accent}, 10px 10px 0 black; }
         
-        .main-content { grid-template-columns: 1fr 360px; gap: 60px; padding: 60px; }
+        .main-content { grid-template-columns: 1fr 360px; gap: 60px; padding: 60px var(--side-padding); }
         .story-column { gap: 60px; }
         .description-text { font-size: 1.2rem; line-height: 1.6; opacity: 0.8; }
         .info-cards { grid-template-columns: 1fr 1fr; }
@@ -526,7 +526,7 @@ export default function EventDetailPage() {
         .stat-val { font-size: 3.5rem; }
         
         .action-sidebar { position: sticky; top: 100px; }
-        .related-section { padding: 60px; }
+        .related-section { padding: 60px var(--side-padding); }
 
         @media (max-width: 1100px) {
           .hero-container { grid-template-columns: 1fr; gap: 40px; }

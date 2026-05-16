@@ -145,7 +145,7 @@ export default function StudentDashboard() {
         <div style={{ fontSize: "4rem", marginBottom: "16px" }}>⚠️</div>
         <h1 className="font-bangers" style={{ fontSize: "3rem", lineHeight: 1 }}>PROFILE MISSING</h1>
         <p className="font-space" style={{ opacity: 0.9, marginTop: "12px", marginBottom: "24px" }}>
-          We couldn't find your student profile. This usually happens if you signed up before the database was fully set up.
+          We could not find your student profile. This usually happens if you signed up before the database was fully set up.
         </p>
         <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
           <button onClick={signOut} className="btn btn-black">SIGN OUT & TRY AGAIN</button>

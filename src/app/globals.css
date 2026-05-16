@@ -14,6 +14,7 @@
   --border: 4px solid #0B0B0B;
   --shadow: 6px 6px 0 #0B0B0B;
   --shadow-lg: 10px 10px 0 #0B0B0B;
+  --side-padding: clamp(16px, 4vw, 60px);
 }
 
 /* ===== RESET ===== */
@@ -152,7 +153,7 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 60px;
+  padding: 18px var(--side-padding);
   border-bottom: var(--border);
   position: sticky;
   top: 0;
@@ -399,12 +400,16 @@ footer .btn-black {
 }
 
 @media (max-width: 768px) {
+  :root {
+    --shadow: 4px 4px 0 #0B0B0B;
+    --shadow-lg: 6px 6px 0 #0B0B0B;
+  }
   .heading-xl { font-size: 3.5rem; }
   .heading-lg { font-size: 2.5rem; }
   .btn { padding: 10px 20px; font-size: 1.1rem; }
   .home-grid { grid-template-columns: 1fr; }
-  .home-hero-panel { padding: 40px 20px 60px; min-height: auto; }
-  .home-auth-panel { padding: 40px 20px; }
+  .home-hero-panel { padding: 40px var(--side-padding) 60px; min-height: auto; }
+  .home-auth-panel { padding: 40px var(--side-padding); }
   .home-stat-row { gap: 20px; }
   .brutal-grid { grid-template-columns: 1fr; }
   .sticker { font-size: 0.9rem; padding: 4px 10px; }
@@ -414,12 +419,13 @@ footer .btn-black {
   .heading-xl { font-size: 2.8rem; }
   .home-auth-card { padding: 24px; }
   .footer-bottom { text-align: center; }
+  .events-title { font-size: 2.8rem; }
 }
 
 /* ===== PAGE HERO (minimal) ===== */
 .page-hero {
   position: relative;
-  padding: 64px 60px 72px;
+  padding: 64px var(--side-padding) 72px;
   overflow: hidden;
   background: var(--cream);
   border-bottom: var(--border);
@@ -562,7 +568,7 @@ footer .btn-black {
 
 /* Events arena */
 .events-page {
-  padding: clamp(34px, 5vw, 72px) clamp(18px, 4vw, 60px) 100px;
+  padding: clamp(34px, 5vw, 72px) var(--side-padding) 100px;
 }
 .events-hero {
   display: grid;
@@ -1021,7 +1027,7 @@ footer .btn-black {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 22px;
-  padding: 0 60px 80px;
+  padding: 0 var(--side-padding) 80px;
 }
 .mission-card {
   background: white;
@@ -1074,7 +1080,7 @@ footer .btn-black {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 0;
-  margin: 0 60px 50px;
+  margin: 0 var(--side-padding) 50px;
   border: var(--border);
   box-shadow: var(--shadow-lg);
   overflow: hidden;
@@ -1102,7 +1108,7 @@ footer .btn-black {
 }
 
 .section-band {
-  margin: 0 60px 40px;
+  margin: 0 var(--side-padding) 40px;
   padding: 28px 32px;
   border: var(--border);
   box-shadow: 8px 8px 0 var(--black);
