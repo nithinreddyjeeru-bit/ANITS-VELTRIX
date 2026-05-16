@@ -240,8 +240,7 @@ export default function EventDetailPage() {
       <div className="dynamic-bg" style={{ opacity: 0.2 }} />
 
       {/* COMPACT HERO */}
-      <section style={{ 
-        padding: "60px 60px 80px", 
+      <section className="hero-section" style={{ 
         background: theme.hero, 
         color: "white", 
         position: "relative",
@@ -249,51 +248,52 @@ export default function EventDetailPage() {
         overflow: "hidden"
       }}>
         <FloatingVisuals />
-        <div style={{ maxWidth: "1400px", margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 400px", gap: "60px", alignItems: "center", position: "relative", zIndex: 1 }}>
-          <div>
-            <Link href="/events" className="font-bebas" style={{ color: theme.accent, display: "flex", alignItems: "center", gap: "8px", textDecoration: "none", marginBottom: "24px" }}>
+        <div className="hero-container" style={{ maxWidth: "1400px", margin: "0 auto", position: "relative", zIndex: 1 }}>
+          <div className="hero-content">
+            <Link href="/events" className="font-bebas back-link" style={{ color: theme.accent, display: "flex", alignItems: "center", gap: "8px", textDecoration: "none", marginBottom: "24px" }}>
               <ArrowLeft size={18} /> BACK TO LISTING
             </Link>
-            <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
-              <span className="sticker" style={{ background: "var(--pink)", color: "white", fontSize: "0.8rem" }}>LIVE ARENA</span>
-              <span className="sticker" style={{ background: theme.secondary, color: "black", fontSize: "0.8rem" }}>{event.category}</span>
+            <div style={{ display: "flex", gap: "10px", marginBottom: "20px", flexWrap: "wrap" }}>
+              <span className="sticker" style={{ background: "var(--pink)", color: "white", fontSize: "0.75rem" }}>LIVE ARENA</span>
+              <span className="sticker" style={{ background: theme.secondary, color: "black", fontSize: "0.75rem" }}>{event.category}</span>
+              <span className="sticker" style={{ background: "white", color: "black", fontSize: "0.75rem" }}>{event.difficulty}</span>
             </div>
-            <h1 className="font-bangers" style={{ fontSize: "clamp(3rem, 6vw, 5.5rem)", lineHeight: 0.9, textShadow: `5px 5px 0 ${theme.accent}, 10px 10px 0 black` }}>
+            <h1 className="font-bangers event-title" style={{ lineHeight: 0.9 }}>
               {event.title}
             </h1>
-            <div style={{ marginTop: "32px", display: "flex", gap: "24px", opacity: 0.9 }} className="font-space">
+            <div className="hero-meta font-space" style={{ marginTop: "32px", display: "flex", flexWrap: "wrap", gap: "20px", opacity: 0.9 }}>
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}><Calendar size={20} color={theme.accent} /> {new Date(event.event_date).toLocaleDateString()}</div>
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}><MapPin size={20} color={theme.accent} /> {event.venue || "Arena"}</div>
-              <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "var(--green)" }}><Zap size={20} fill="currentColor" /> +{event.xp_reward} XP</div>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#00FF9D" }}><Zap size={20} fill="currentColor" /> +{event.xp_reward} XP</div>
             </div>
           </div>
 
-          <motion.div whileHover={{ scale: 1.02 }} style={{ 
-            background: "white", color: "black", borderRadius: "24px", padding: "32px", border: "5px solid black", boxShadow: `15px 15px 0 ${theme.accent}`, position: "relative", overflow: "hidden" 
+          <motion.div whileHover={{ scale: 1.02 }} className="hero-pass-card" style={{ 
+            background: "white", color: "black", borderRadius: "24px", padding: "32px", border: "5px solid black", boxShadow: `12px 12px 0 ${theme.accent}`, position: "relative", overflow: "hidden" 
           }}>
             <div className="holographic-pass" />
             <div className="scan-line" style={{ background: theme.glow }} />
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "30px" }}>
-              <span className="font-bangers" style={{ opacity: 0.4 }}>VELTRIX PASS</span>
-              <CategoryIcon size={32} color={theme.accent} />
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "24px" }}>
+              <span className="font-bangers" style={{ opacity: 0.4, fontSize: "0.8rem" }}>VELTRIX PASS</span>
+              <CategoryIcon size={24} color={theme.accent} />
             </div>
-            <div style={{ textAlign: "center", marginBottom: "30px" }}>
-              <h2 className="font-bangers" style={{ fontSize: "1.8rem" }}>{event.title}</h2>
-              <div className="font-bebas" style={{ fontSize: "0.9rem", opacity: 0.5 }}>#VX-{id.slice(0, 6).toUpperCase()}</div>
+            <div style={{ textAlign: "center", marginBottom: "24px" }}>
+              <h2 className="font-bangers" style={{ fontSize: "1.5rem" }}>{event.title}</h2>
+              <div className="font-bebas" style={{ fontSize: "0.8rem", opacity: 0.5 }}>#VX-{id.slice(0, 6).toUpperCase()}</div>
             </div>
-            <div style={{ borderTop: "2px dashed #ccc", paddingTop: "20px", display: "flex", justifyContent: "space-between" }}>
+            <div style={{ borderTop: "2px dashed #ccc", paddingTop: "16px", display: "flex", justifyContent: "space-between", fontSize: "0.9rem" }}>
               <div className="font-bebas">SEAT: {regCount + 101}</div>
-              <div className="font-bebas">XP: {event.xp_reward}</div>
+              <div className="font-bebas">MISSION READY</div>
             </div>
           </motion.div>
         </div>
       </section>
 
       {/* STICKY QUICK NAV */}
-      <nav style={{ 
-        position: "sticky", top: "0", background: "white", borderBottom: "4px solid black", zIndex: 100, padding: "0 60px"
+      <nav className="sticky-nav" style={{ 
+        position: "sticky", top: "0", background: "white", borderBottom: "4px solid black", zIndex: 100
       }}>
-        <div style={{ maxWidth: "1400px", margin: "0 auto", display: "flex", gap: "40px" }}>
+        <div style={{ maxWidth: "1400px", margin: "0 auto", display: "flex", gap: "24px", overflowX: "auto", padding: "0 20px" }} className="no-scrollbar">
           {[
             { id: "overview", label: "OVERVIEW" },
             ...(event.rules ? [{ id: "rules", label: "RULES" }] : []),
@@ -307,8 +307,9 @@ export default function EventDetailPage() {
                 document.getElementById(tab.id)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
               }}
               style={{ 
-                padding: "20px 0", border: "none", background: "none", cursor: "pointer", position: "relative",
-                fontFamily: "Bebas Neue", fontSize: "1.2rem", color: activeTab === tab.id ? theme.accent : "black"
+                padding: "16px 0", border: "none", background: "none", cursor: "pointer", position: "relative",
+                fontFamily: "Bebas Neue", fontSize: "1rem", color: activeTab === tab.id ? theme.accent : "black",
+                whiteSpace: "nowrap"
               }}>
               {tab.label}
               {activeTab === tab.id && <div style={{ position: "absolute", bottom: "-4px", left: 0, right: 0, height: "4px", background: theme.accent }} />}
@@ -318,35 +319,35 @@ export default function EventDetailPage() {
       </nav>
 
       {/* CONTENT GRID */}
-      <main style={{ maxWidth: "1400px", margin: "0 auto", padding: "60px", display: "grid", gridTemplateColumns: "1fr 400px", gap: "60px", alignItems: "start" }}>
+      <main className="main-content" style={{ maxWidth: "1400px", margin: "0 auto", display: "grid", alignItems: "start" }}>
         
         {/* LEFT COLUMN — THE STORY */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "80px" }}>
+        <div className="story-column" style={{ display: "flex", flexDirection: "column" }}>
           
           <section id="overview">
-            <div className="sticker" style={{ background: "white", marginBottom: "24px" }}>THE CHALLENGE</div>
-            <p className="font-space" style={{ fontSize: "1.3rem", lineHeight: 1.6, opacity: 0.8 }}>
+            <div className="sticker" style={{ background: "white", marginBottom: "20px" }}>THE CHALLENGE</div>
+            <p className="font-space description-text">
               {event.description || "Mission brief is currently encrypted. Check back soon."}
             </p>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px", marginTop: "40px" }}>
-              <div className="brutal-card" style={{ padding: "30px", background: "white" }}>
-                <Rocket size={32} color={theme.accent} style={{ marginBottom: "16px" }} />
+            <div className="info-cards" style={{ display: "grid", gap: "20px", marginTop: "32px" }}>
+              <div className="brutal-card" style={{ padding: "24px", background: "white" }}>
+                <Rocket size={28} color={theme.accent} style={{ marginBottom: "12px" }} />
                 <h4 className="font-bangers">MODE</h4>
-                <p className="font-space" style={{ opacity: 0.7, textTransform: "uppercase" }}>{event.mode} BATTLE</p>
+                <p className="font-space" style={{ opacity: 0.7, textTransform: "uppercase", fontSize: "0.9rem" }}>{event.mode} BATTLE</p>
               </div>
-              <div className="brutal-card" style={{ padding: "30px", background: "white" }}>
-                <ShieldCheck size={32} color={theme.secondary} style={{ marginBottom: "16px" }} />
+              <div className="brutal-card" style={{ padding: "24px", background: "white" }}>
+                <ShieldCheck size={28} color={theme.secondary} style={{ marginBottom: "12px" }} />
                 <h4 className="font-bangers">DIFFICULTY</h4>
-                <p className="font-space" style={{ opacity: 0.7, textTransform: "uppercase" }}>{event.difficulty} LEVEL</p>
+                <p className="font-space" style={{ opacity: 0.7, textTransform: "uppercase", fontSize: "0.9rem" }}>{event.difficulty} LEVEL</p>
               </div>
             </div>
           </section>
 
           {event.rules && (
             <section id="rules">
-              <div className="sticker" style={{ background: "#FFD700", color: "black", marginBottom: "24px" }}>ARENA RULES</div>
-              <div className="brutal-card" style={{ padding: "40px", background: "white", whiteSpace: "pre-wrap" }}>
-                <p className="font-space" style={{ fontSize: "1.1rem", lineHeight: 1.7, opacity: 0.9 }}>
+              <div className="sticker" style={{ background: "#FFD700", color: "black", marginBottom: "20px" }}>ARENA RULES</div>
+              <div className="brutal-card" style={{ padding: "24px", background: "white", whiteSpace: "pre-wrap" }}>
+                <p className="font-space" style={{ fontSize: "1rem", lineHeight: 1.6, opacity: 0.8 }}>
                   {event.rules}
                 </p>
               </div>
@@ -354,63 +355,65 @@ export default function EventDetailPage() {
           )}
 
           <section id="timeline">
-            <div className="sticker" style={{ background: "#00F2FF", color: "black", marginBottom: "24px" }}>PROGRESSION</div>
-            <h2 className="font-bangers" style={{ fontSize: "3rem", marginBottom: "30px" }}>BATTLE PHASES</h2>
-            <BattleTimeline />
+            <div className="sticker" style={{ background: "#00F2FF", color: "black", marginBottom: "20px" }}>PROGRESSION</div>
+            <h2 className="font-bangers" style={{ fontSize: "2.5rem", marginBottom: "24px" }}>BATTLE PHASES</h2>
+            <div className="timeline-container" style={{ overflowX: "auto", padding: "10px" }} className="no-scrollbar">
+               <BattleTimeline />
+            </div>
           </section>
 
           <section id="rewards">
-            <div className="brutal-card" style={{ background: "black", color: "white", padding: "60px", textAlign: "center", boxShadow: `20px 20px 0 ${theme.accent}`, border: "5px solid white" }}>
-              <div style={{ background: theme.accent, width: "80px", height: "80px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 30px" }}>
-                <Award size={48} color="black" />
+            <div className="brutal-card rewards-card" style={{ background: "black", color: "white", textAlign: "center", border: "5px solid white" }}>
+              <div className="reward-icon" style={{ background: theme.accent, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px" }}>
+                <Award size={40} color="black" />
               </div>
-              <h2 className="font-bangers" style={{ fontSize: "3.5rem", color: theme.secondary }}>
+              <h2 className="font-bangers reward-title">
                 {event.prize_pool ? "PRIZE POOL" : "MISSION REWARDS"}
               </h2>
               {event.prize_pool && (
-                <div className="font-bangers" style={{ fontSize: "4.5rem", color: "white", margin: "20px 0", textShadow: `0 0 20px ${theme.glow}` }}>
+                <div className="font-bangers prize-pool-text" style={{ color: "white", margin: "16px 0", textShadow: `0 0 20px ${theme.glow}` }}>
                   {event.prize_pool}
                 </div>
               )}
-              <div style={{ display: "flex", justifyContent: "center", gap: "40px", margin: "40px 0" }}>
-                <div><div className="font-bangers" style={{ fontSize: "4rem" }}>+{event.xp_reward}</div><div className="font-bebas">XP</div></div>
+              <div className="reward-stats" style={{ display: "flex", justifyContent: "center", gap: "32px", margin: "32px 0" }}>
+                <div><div className="font-bangers stat-val">+{event.xp_reward}</div><div className="font-bebas">XP</div></div>
                 <div style={{ width: "2px", background: "rgba(255,255,255,0.2)" }} />
-                <div><div className="font-bangers" style={{ fontSize: "4rem" }}>1</div><div className="font-bebas">ACHIEVEMENT</div></div>
+                <div><div className="font-bangers stat-val">1</div><div className="font-bebas">ACHIEVEMENT</div></div>
               </div>
             </div>
           </section>
 
           {event.contact_info && (
             <section id="contact">
-               <div className="sticker" style={{ background: theme.accent, color: "black", marginBottom: "24px" }}>SUPPORT / INTEL</div>
-               <div className="brutal-card" style={{ padding: "30px", background: "white" }}>
-                  <div className="font-bebas" style={{ opacity: 0.5, marginBottom: "10px" }}>CONTACT COORDINATORS</div>
-                  <p className="font-space" style={{ fontSize: "1.2rem" }}>{event.contact_info}</p>
+               <div className="sticker" style={{ background: theme.accent, color: "black", marginBottom: "20px" }}>SUPPORT / INTEL</div>
+               <div className="brutal-card" style={{ padding: "24px", background: "white" }}>
+                  <div className="font-bebas" style={{ opacity: 0.5, marginBottom: "8px", fontSize: "0.8rem" }}>CONTACT COORDINATORS</div>
+                  <p className="font-space" style={{ fontSize: "1rem" }}>{event.contact_info}</p>
                </div>
             </section>
           )}
         </div>
 
         {/* RIGHT COLUMN — STICKY ACTION PANEL */}
-        <aside style={{ position: "sticky", top: "100px", display: "flex", flexDirection: "column", gap: "30px" }}>
+        <aside className="action-sidebar" style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
           
-          <div className="brutal-card" style={{ background: "white", padding: "40px", border: "5px solid black", boxShadow: "12px 12px 0 black" }}>
+          <div className="brutal-card action-card" style={{ background: "white", padding: "32px", border: "5px solid black", boxShadow: "10px 10px 0 black" }}>
             {!isPast && (
-              <div style={{ textAlign: "center", marginBottom: "30px" }}>
-                <div className="font-bebas" style={{ opacity: 0.5, marginBottom: "10px" }}>ARENA CLOSES IN</div>
+              <div style={{ textAlign: "center", marginBottom: "24px" }}>
+                <div className="font-bebas" style={{ opacity: 0.5, marginBottom: "8px", fontSize: "0.9rem" }}>ARENA CLOSES IN</div>
                 <Countdown targetDate={event.event_date} color={theme.accent} />
               </div>
             )}
 
-            <div style={{ marginBottom: "30px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+            <div style={{ marginBottom: "24px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px", fontSize: "0.9rem" }}>
                 <span className="font-bangers">{regCount} ENROLLED</span>
                 <span className="font-bebas" style={{ opacity: 0.5 }}>MAX: {event.max_seats}</span>
               </div>
-              <div style={{ height: "14px", background: "#f0f0f0", border: "3px solid black", borderRadius: "8px", overflow: "hidden" }}>
+              <div style={{ height: "12px", background: "#f0f0f0", border: "3px solid black", borderRadius: "6px", overflow: "hidden" }}>
                 <motion.div initial={{ width: 0 }} animate={{ width: `${fillPct}%` }} style={{ height: "100%", background: fillPct > 85 ? "var(--pink)" : "var(--green)" }} />
               </div>
-              <div className="font-space" style={{ fontSize: "0.85rem", marginTop: "10px", fontWeight: "bold" }}>
+              <div className="font-space" style={{ fontSize: "0.8rem", marginTop: "10px", fontWeight: "bold" }}>
                 {isFull ? "⚠️ ARENA FULL" : `⚡ ${event.max_seats - regCount} SPOTS LEFT`}
               </div>
             </div>
@@ -419,38 +422,38 @@ export default function EventDetailPage() {
               {isPast ? (
                 <button disabled className="btn" style={{ width: "100%", opacity: 0.5 }}>BATTLE ENDED</button>
               ) : isRegistered ? (
-                <Link href={`/events/${id}/register`} className="btn" style={{ width: "100%", background: "var(--green)", color: "black" }}>VIEW PASS →</Link>
+                <Link href={`/events/${id}/register`} className="btn" style={{ width: "100%", background: "var(--green)", color: "black", textAlign: "center" }}>VIEW PASS →</Link>
               ) : (
-                <Link href={`/events/${id}/register`} className="btn" style={{ width: "100%", background: "var(--green)", color: "black", fontSize: "1.4rem" }}>REGISTER NOW</Link>
+                <Link href={`/events/${id}/register`} className="btn" style={{ width: "100%", background: "var(--green)", color: "black", fontSize: "1.2rem", textAlign: "center" }}>REGISTER NOW</Link>
               )}
               <div style={{ display: "flex", gap: "10px" }}>
-                <button onClick={toggleBookmark} className="btn" style={{ flex: 1, background: "white" }}>{isBookmarked ? <BookmarkCheck /> : <Bookmark />}</button>
-                <button className="btn" style={{ flex: 1, background: "white" }}><Share2 /></button>
+                <button onClick={toggleBookmark} className="btn" style={{ flex: 1, background: "white", padding: "10px" }}>{isBookmarked ? <BookmarkCheck /> : <Bookmark />}</button>
+                <button className="btn" style={{ flex: 1, background: "white", padding: "10px" }}><Share2 /></button>
               </div>
             </div>
 
             {/* PARTICIPANTS STRIP */}
-            <div style={{ marginTop: "30px", padding: "15px", background: "#f9f9f9", borderRadius: "12px", display: "flex", alignItems: "center", gap: "12px" }}>
+            <div style={{ marginTop: "24px", padding: "12px", background: "#f9f9f9", borderRadius: "10px", display: "flex", alignItems: "center", gap: "10px" }}>
               <div style={{ display: "flex" }}>
                 {participants.slice(0, 4).map((p, i) => (
-                  <div key={i} style={{ width: "30px", height: "30px", borderRadius: "50%", border: "2px solid black", marginLeft: i === 0 ? 0 : "-10px", background: "white", overflow: "hidden" }}>
+                  <div key={i} style={{ width: "24px", height: "24px", borderRadius: "50%", border: "1.5px solid black", marginLeft: i === 0 ? 0 : "-8px", background: "white", overflow: "hidden" }}>
                     <img src={`https://api.dicebear.com/7.x/pixel-art/svg?seed=${p.id}`} alt="" />
                   </div>
                 ))}
               </div>
-              <span className="font-space" style={{ fontSize: "0.8rem", opacity: 0.6 }}>Join {regCount}+ others</span>
+              <span className="font-space" style={{ fontSize: "0.75rem", opacity: 0.6 }}>Join {regCount}+ others</span>
             </div>
           </div>
 
-          <div className="brutal-card" style={{ padding: "24px", background: "white", border: "5px solid black" }}>
-            <h4 className="font-bangers" style={{ marginBottom: "20px", display: "flex", alignItems: "center", gap: "10px" }}><Flame size={18} color="var(--pink)" /> LIVE FEED</h4>
-            <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+          <div className="brutal-card live-feed-card" style={{ padding: "20px", background: "white", border: "4px solid black" }}>
+            <h4 className="font-bangers" style={{ marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px", fontSize: "1rem" }}><Flame size={16} color="var(--pink)" /> LIVE FEED</h4>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               {activities.length > 0 ? activities.map((act, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "center", gap: "10px", paddingBottom: "10px", borderBottom: i === activities.length - 1 ? "none" : "1px solid #eee" }}>
-                  <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "var(--green)" }} />
-                  <span className="font-space" style={{ fontSize: "0.85rem", opacity: 0.7 }}>{act}</span>
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: "8px", paddingBottom: "8px", borderBottom: i === activities.length - 1 ? "none" : "1px solid #eee" }}>
+                  <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: "var(--green)" }} />
+                  <span className="font-space" style={{ fontSize: "0.8rem", opacity: 0.7 }}>{act}</span>
                 </div>
-              )) : <p className="font-space" style={{ fontSize: "0.8rem", opacity: 0.5 }}>Awaiting active signals...</p>}
+              )) : <p className="font-space" style={{ fontSize: "0.75rem", opacity: 0.5 }}>Awaiting active signals...</p>}
             </div>
           </div>
         </aside>
@@ -458,21 +461,21 @@ export default function EventDetailPage() {
 
       {/* RELATED EVENTS CAROUSEL */}
       {relatedEvents.length > 0 && (
-        <section style={{ padding: "80px 60px", background: "black", color: "white" }}>
+        <section className="related-section" style={{ background: "black", color: "white" }}>
           <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "end", marginBottom: "40px" }}>
-              <h2 className="font-bangers" style={{ fontSize: "3rem" }}>OTHER BATTLES</h2>
-              <Link href="/events" className="btn" style={{ background: "white", color: "black" }}>VIEW ALL</Link>
+            <div className="related-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "end", marginBottom: "32px" }}>
+              <h2 className="font-bangers" style={{ fontSize: "2rem" }}>OTHER BATTLES</h2>
+              <Link href="/events" className="btn" style={{ background: "white", color: "black", padding: "8px 16px", fontSize: "0.9rem" }}>VIEW ALL</Link>
             </div>
-            <div style={{ display: "flex", gap: "24px", overflowX: "auto", paddingBottom: "20px" }} className="no-scrollbar">
+            <div style={{ display: "flex", gap: "20px", overflowX: "auto", paddingBottom: "15px" }} className="no-scrollbar">
               {relatedEvents.map(ev => (
-                <Link key={ev.id} href={`/events/${ev.id}`} style={{ textDecoration: "none", color: "inherit", minWidth: "300px" }}>
-                  <div className="brutal-card" style={{ background: "white", color: "black", padding: "20px" }}>
-                    <div style={{ height: "150px", background: "#eee", borderRadius: "12px", marginBottom: "15px", overflow: "hidden" }}>
+                <Link key={ev.id} href={`/events/${ev.id}`} style={{ textDecoration: "none", color: "inherit", minWidth: "260px" }}>
+                  <div className="brutal-card" style={{ background: "white", color: "black", padding: "16px" }}>
+                    <div style={{ height: "130px", background: "#eee", borderRadius: "10px", marginBottom: "12px", overflow: "hidden" }}>
                       {ev.banner_url ? <img src={ev.banner_url} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <div style={{ height: "100%", background: "#f0f0f0" }} />}
                     </div>
-                    <h3 className="font-bangers">{ev.title}</h3>
-                    <div className="font-space" style={{ opacity: 0.5, fontSize: "0.8rem", marginTop: "10px" }}>{new Date(ev.event_date).toDateString()}</div>
+                    <h3 className="font-bangers" style={{ fontSize: "1.2rem" }}>{ev.title}</h3>
+                    <div className="font-space" style={{ opacity: 0.5, fontSize: "0.75rem", marginTop: "8px" }}>{new Date(ev.event_date).toDateString()}</div>
                   </div>
                 </Link>
               ))}
@@ -482,24 +485,62 @@ export default function EventDetailPage() {
       )}
 
       {/* MOBILE STICKY BAR */}
-      <div className="mobile-only" style={{ 
-        position: "fixed", bottom: 0, left: 0, right: 0, background: "white", borderTop: "4px solid black", padding: "16px", zIndex: 1000, display: "flex", justifyContent: "space-between", alignItems: "center"
+      <div className="mobile-only sticky-cta" style={{ 
+        position: "fixed", bottom: 0, left: 0, right: 0, background: "white", borderTop: "4px solid black", padding: "12px 20px", zIndex: 1000, display: "flex", justifyContent: "space-between", alignItems: "center"
       }}>
-        <div><div className="font-bangers" style={{ color: "var(--pink)" }}>+{event.xp_reward} XP</div><div className="font-bebas" style={{ fontSize: "0.8rem" }}>MISSION REWARD</div></div>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <div className="font-bangers" style={{ color: "var(--pink)", fontSize: "1.1rem" }}>+{event.xp_reward} XP</div>
+          <div className="font-bebas" style={{ fontSize: "0.7rem", opacity: 0.6 }}>REWARD</div>
+        </div>
         {isRegistered ? (
-          <Link href={`/events/${id}/register`} className="btn" style={{ background: "var(--green)" }}>VIEW PASS</Link>
+          <Link href={`/events/${id}/register`} className="btn" style={{ background: "var(--green)", padding: "10px 24px" }}>VIEW PASS</Link>
         ) : (
-          <Link href={`/events/${id}/register`} className="btn" style={{ background: "var(--green)" }}>REGISTER NOW</Link>
+          <Link href={`/events/${id}/register`} className="btn" style={{ background: "var(--green)", padding: "10px 24px" }}>REGISTER NOW</Link>
         )}
       </div>
 
       <style jsx>{`
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        @media (max-width: 1024px) {
-          main { grid-template-columns: 1fr !important; }
-          aside { position: static !important; }
+        
+        .hero-section { padding: 80px 60px 100px; }
+        .hero-container { display: grid; grid-template-columns: 1fr 360px; gap: 60px; alignItems: center; }
+        .event-title { font-size: clamp(3rem, 6vw, 5.5rem); text-shadow: 5px 5px 0 \${theme.accent}, 10px 10px 0 black; }
+        
+        .main-content { grid-template-columns: 1fr 360px; gap: 60px; padding: 60px; }
+        .story-column { gap: 60px; }
+        .description-text { font-size: 1.2rem; lineHeight: 1.6; opacity: 0.8; }
+        .info-cards { grid-template-columns: 1fr 1fr; }
+        .rewards-card { padding: 48px; boxShadow: 15px 15px 0 \${theme.accent}; }
+        .reward-icon { width: 70px; height: 70px; }
+        .reward-title { fontSize: 3rem; color: \${theme.secondary}; }
+        .prize-pool-text { fontSize: 4rem; }
+        .stat-val { fontSize: 3.5rem; }
+        
+        .action-sidebar { position: sticky; top: 100px; }
+        .related-section { padding: 60px; }
+
+        @media (max-width: 1100px) {
+          .hero-container { grid-template-columns: 1fr; gap: 40px; }
+          .main-content { grid-template-columns: 1fr; gap: 40px; padding: 40px 20px; }
+          .action-sidebar { position: static; }
+          .hero-pass-card { max-width: 400px; }
         }
+
+        @media (max-width: 768px) {
+          .hero-section { padding: 60px 20px 80px; }
+          .event-title { font-size: 2.8rem; text-shadow: 4px 4px 0 \${theme.accent}, 8px 8px 0 black; }
+          .hero-meta { gap: 15px; font-size: 0.9rem; }
+          .description-text { font-size: 1.1rem; }
+          .info-cards { grid-template-columns: 1fr; }
+          .rewards-card { padding: 32px 20px; }
+          .reward-title { fontSize: 2rem; }
+          .prize-pool-text { fontSize: 2.8rem; }
+          .stat-val { fontSize: 2.5rem; }
+          .related-section { padding: 40px 20px; }
+          .main-content { padding-bottom: 100px; }
+        }
+
         @media (min-width: 769px) { .mobile-only { display: none !important; } }
       `}</style>
     </div>
