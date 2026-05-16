@@ -1,7 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  distDir: ".next-build2",
+  typescript: {
+    // Prevent Next.js from auto-modifying tsconfig.json
+    ignoreBuildErrors: false,
+  },
+  images: {
+    unoptimized: true,
+  },
 };
 
 export default nextConfig;
