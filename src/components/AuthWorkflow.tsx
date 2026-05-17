@@ -63,7 +63,7 @@ export function AuthWorkflow() {
         setMessage(`Error: ${error.message}`);
       } else if (data.user) {
         if (!data.session) {
-          setMessage("Account created, but Supabase email confirmation is still ON. Turn it OFF in Supabase Auth settings for direct login.");
+          setMessage("Verification email has been sent! Please check your campus email inbox to verify your account.");
         } else {
           const profile = await ensureProfile(data.user, {
             name,
