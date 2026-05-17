@@ -12,7 +12,7 @@ import QRCode from "qrcode";
 import { 
   Zap, Trophy, Calendar, Award, Bookmark, Bell, Settings, 
   ChevronRight, ArrowLeft, Clock, CreditCard, QrCode, 
-  ShieldCheck, CheckCircle, Flame, Star, MessageSquare 
+  ShieldCheck, CheckCircle, Flame, Star, MessageSquare, MapPin
 } from "lucide-react";
 
 function StatCard({ label, value, icon, color }: { label: string; value: string | number; icon: React.ReactNode; color: string }) {
