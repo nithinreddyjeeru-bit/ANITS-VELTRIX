@@ -346,8 +346,13 @@ export default function StudentDashboard() {
                 {selectedReg.qr_token && selectedReg.status !== "pending" && (
                   <div className="lobby-qr-holder brutal-card bg-cream">
                     <div className="sticker bg-black text-white" style={{ marginBottom: "12px" }}><QrCode size={14} /> SECURE ENTRY TICKET</div>
-                    <img src={expandedQrUrl} alt="Secure QR Pass" />
-                    <span className="font-bebas qr-pass-id">PASS ID: {selectedReg.qr_token.toUpperCase()}</span>
+                    <div className="qr-img-wrapper">
+                      <img src={expandedQrUrl} alt="Secure QR Pass" />
+                    </div>
+                    <span className="font-bebas qr-pass-id" style={{ marginTop: "12px", marginBottom: "12px", display: "block" }}>PASS ID: {selectedReg.qr_token.toUpperCase()}</span>
+                    <a href={expandedQrUrl} download={`veltrix-pass-${selectedReg.event_id}.png`} className="btn btn-green font-bebas qr-download-btn">
+                      DOWNLOAD TICKET PASS
+                    </a>
                   </div>
                 )}
 
@@ -376,10 +381,56 @@ export default function StudentDashboard() {
                     </div>
                   )
                 ) : (
-                  <div className="brutal-card solo-lobby-details">
-                    <h3 className="font-bebas solo-title"><Star /> SOLO INFILTRATION DETECTED</h3>
-                    <p>You have registered for this mission as a solo operative. No teammates or comms lobby are active.</p>
-                    <div className="sticker bg-green">+{selectedReg.event?.xp_reward} XP pending verified check-in</div>
+                  <div className="brutal-card solo-dossier-card">
+                    <div className="sticker bg-pink font-bebas" style={{ marginBottom: "16px", alignSelf: "flex-start" }}>CAMPAIGN BRIEFING</div>
+                    <h3 className="font-bangers solo-dossier-title">
+                      <Star size={24} style={{ fill: "var(--yellow)", color: "black" }} /> LONE WOLF INFILTRATION
+                    </h3>
+                    
+                    <div className="mission-brief-text font-space">
+                      <p><strong>SQUAD TYPE:</strong> LONE OPERATIVE</p>
+                      <p className="brief-desc">
+                        Transmission channels are silent. You are venturing into the Arena without squad backup. Solo campaigns yield double focus points and direct profile ranking XP.
+                      </p>
+                    </div>
+
+                    <div className="dossier-divider" />
+
+                    <h4 className="font-bebas section-title" style={{ fontSize: "1.3rem", marginBottom: "12px" }}>QUEST PROGRESSION</h4>
+                    <div className="quest-checklist font-space">
+                      <div className="quest-item completed">
+                        <span className="quest-check">✓</span>
+                        <div className="quest-info">
+                          <strong>Infiltration Secured</strong>
+                          <span>Ticket pass registered and active.</span>
+                        </div>
+                      </div>
+                      <div className="quest-item pending">
+                        <span className="quest-check"></span>
+                        <div className="quest-info">
+                          <strong>Arena Check-In</strong>
+                          <span>Scan entry QR pass at venue door.</span>
+                        </div>
+                      </div>
+                      <div className="quest-item pending">
+                        <span className="quest-check"></span>
+                        <div className="quest-info">
+                          <strong>Collect Combat Reward</strong>
+                          <span className="text-green">Claim +{selectedReg.event?.xp_reward} XP directly.</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="dossier-divider" />
+
+                    <div className="operative-stats brutal-card bg-cream">
+                      <h4 className="font-bebas stats-heading">OPERATIVE BENEFITS</h4>
+                      <div className="benefits-list">
+                        <span>🎯 Double focus XP modifiers active</span>
+                        <span>🏆 Hall of Fame eligibility unlocked</span>
+                        <span>⚡ Leaderboard XP Multipliers (1.5x)</span>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -864,23 +915,118 @@ export default function StudentDashboard() {
           align-items: center;
           justify-content: center;
         }
-        .solo-lobby-details {
-          text-align: center;
+        .solo-dossier-card {
+          background: white;
+          border: 4px solid #000;
+          box-shadow: 8px 8px 0px #000;
+          padding: 24px;
           display: flex;
           flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          height: 100%;
-          min-height: 300px;
+          text-align: left;
         }
-        .solo-title {
-          font-size: 1.8rem;
+        .solo-dossier-title {
+          font-size: 2rem;
           margin-top: 0;
-          margin-bottom: 12px;
-          color: var(--pink, #FF007F);
+          margin-bottom: 16px;
           display: flex;
           align-items: center;
+          gap: 10px;
+          line-height: 1;
+        }
+        .mission-brief-text {
+          font-size: 0.95rem;
+          line-height: 1.5;
+        }
+        .brief-desc {
+          opacity: 0.8;
+          margin-top: 6px;
+        }
+        .dossier-divider {
+          height: 3px;
+          background: #000;
+          margin: 20px 0;
+        }
+        .quest-checklist {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+        }
+        .quest-item {
+          display: flex;
+          align-items: flex-start;
+          gap: 12px;
+          padding: 10px 14px;
+          border: 2px solid #000;
+          box-shadow: 3px 3px 0px #000;
+          background: #FDFDFD;
+        }
+        .quest-item.completed {
+          border-color: var(--green, #39FF14);
+          background: #F0FFF4;
+          box-shadow: 3px 3px 0px var(--green, #39FF14);
+        }
+        .quest-item.completed .quest-check {
+          background: var(--green, #39FF14);
+          border-color: #000;
+          color: #000;
+        }
+        .quest-check {
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          border: 2px solid #000;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: bold;
+          font-size: 0.85rem;
+          background: #EAEAEA;
+          flex-shrink: 0;
+        }
+        .quest-info {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+        }
+        .quest-info strong {
+          font-size: 1rem;
+        }
+        .quest-info span {
+          font-size: 0.8rem;
+          opacity: 0.7;
+        }
+        .text-green {
+          color: #2F855A !important;
+          font-weight: bold;
+        }
+        .operative-stats {
+          border-color: var(--yellow, #FFE600);
+          background: #FFFDEC;
+          padding: 16px;
+        }
+        .stats-heading {
+          font-size: 1.25rem;
+          margin-top: 0;
+          margin-bottom: 10px;
+        }
+        .benefits-list {
+          display: flex;
+          flex-direction: column;
           gap: 8px;
+          font-size: 0.9rem;
+          font-weight: bold;
+        }
+        .qr-img-wrapper {
+          border: 3px solid #000;
+          padding: 12px;
+          background: white;
+          box-shadow: 4px 4px 0px #000;
+        }
+        .qr-download-btn {
+          width: 100%;
+          padding: 12px;
+          justify-content: center;
+          font-size: 1.1rem;
         }
 
         /* DIGITAL TROPHIES GRID */
