@@ -42,7 +42,7 @@ export default function RegisterPage() {
   // Solo Steps: 0: Personal, 1: College, 2: Review, 3: Payment, 4: Success
   const [soloStep, setSoloStep] = useState(0);
 
-  // Solo Form Fields
+  // Form Fields
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -52,7 +52,8 @@ export default function RegisterPage() {
     year: "1",
     section: "A",
     gender: "",
-    skills: ""
+    skills: "",
+    roleInTeam: "Squad Lead"
   });
 
   // Team Form Fields
@@ -94,7 +95,8 @@ export default function RegisterPage() {
           year: String(profile.year || 1),
           section: "A",
           gender: "",
-          skills: ""
+          skills: "",
+          roleInTeam: "Squad Lead"
         });
       }
 
@@ -271,6 +273,19 @@ export default function RegisterPage() {
 
     try {
       const inviteCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+
+      // Update leader profile details in Supabase
+      const { error: profileErr } = await supabase
+        .from("profiles")
+        .update({
+          registration_no: formData.registrationNo.trim(),
+          department: formData.department.trim(),
+          year: Number(formData.year),
+          bio: `Role: ${formData.roleInTeam.trim()} | Skills: ${formData.skills.trim()}`
+        })
+        .eq("id", userId);
+
+      if (profileErr) throw profileErr;
 
       // 1. Create team
       const { data: teamData, error: teamErr } = await supabase
@@ -639,6 +654,103 @@ export default function RegisterPage() {
                           <option value="4">4 Members (Standard)</option>
                           <option value="5">5 Members</option>
                         </select>
+                      </label>
+                    </div>
+
+                    <div className="section-divider" style={{ margin: "24px 0", borderTop: "2px dashed #000" }} />
+                    <h3 className="font-bebas form-section-title" style={{ fontSize: "1.5rem", marginBottom: "15px" }}>⚡ SQUAD LEAD PROFILE DETAILS</h3>
+                    
+                    <div className="inputs-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
+                      <label className="input-label">
+                        <span className="font-bebas">Your Squad Role</span>
+                        <input 
+                          className="brutal-card" 
+                          placeholder="e.g. Lead Coder, Designer, Captain" 
+                          value={formData.roleInTeam} 
+                          onChange={e => setFormData({...formData, roleInTeam: e.target.value})} 
+                          required 
+                        />
+                      </label>
+                      <label className="input-label">
+                        <span className="font-bebas">Mobile Number</span>
+                        <input 
+                          className="brutal-card" 
+                          type="tel" 
+                          placeholder="10-digit number" 
+                          value={formData.mobile} 
+                          onChange={e => setFormData({...formData, mobile: e.target.value})} 
+                          required 
+                        />
+                      </label>
+                    </div>
+
+                    <div className="inputs-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
+                      <label className="input-label">
+                        <span className="font-bebas">Registration Number</span>
+                        <input 
+                          className="brutal-card" 
+                          placeholder="312xxxxxxxxx" 
+                          value={formData.registrationNo} 
+                          onChange={e => setFormData({...formData, registrationNo: e.target.value})} 
+                          required 
+                        />
+                      </label>
+                      <label className="input-label">
+                        <span className="font-bebas">Department</span>
+                        <select 
+                          className="brutal-card" 
+                          value={formData.department} 
+                          onChange={e => setFormData({...formData, department: e.target.value})} 
+                          required
+                        >
+                          <option value="">Select...</option>
+                          <option value="CSE">Computer Science (CSE)</option>
+                          <option value="IT">Information Tech (IT)</option>
+                          <option value="ECE">Electronics (ECE)</option>
+                          <option value="EEE">Electrical (EEE)</option>
+                          <option value="Mechanical">Mechanical</option>
+                          <option value="Civil">Civil</option>
+                          <option value="MBA">MBA</option>
+                        </select>
+                      </label>
+                    </div>
+
+                    <div className="inputs-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
+                      <label className="input-label">
+                        <span className="font-bebas">Current Year</span>
+                        <select 
+                          className="brutal-card" 
+                          value={formData.year} 
+                          onChange={e => setFormData({...formData, year: e.target.value})} 
+                          required
+                        >
+                          <option value="1">1st Year</option>
+                          <option value="2">2nd Year</option>
+                          <option value="3">3rd Year</option>
+                          <option value="4">4th Year</option>
+                        </select>
+                      </label>
+                      <label className="input-label">
+                        <span className="font-bebas">Section</span>
+                        <input 
+                          className="brutal-card" 
+                          maxLength={1} 
+                          value={formData.section} 
+                          onChange={e => setFormData({...formData, section: e.target.value.toUpperCase()})} 
+                          required 
+                        />
+                      </label>
+                    </div>
+
+                    <div className="inputs-grid" style={{ display: "grid", gridTemplateColumns: "1fr", gap: "16px", marginBottom: "20px" }}>
+                      <label className="input-label">
+                        <span className="font-bebas">Skills & Tech Stack (Optional)</span>
+                        <input 
+                          className="brutal-card" 
+                          placeholder="e.g. React, Python, UI Design, Figma" 
+                          value={formData.skills} 
+                          onChange={e => setFormData({...formData, skills: e.target.value})} 
+                        />
                       </label>
                     </div>
 
