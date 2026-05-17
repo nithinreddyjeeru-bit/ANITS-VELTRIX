@@ -109,15 +109,7 @@ export function AuthWorkflow() {
     setLoading(false);
   };
 
-  const handleGoogle = async () => {
-    setLoading(true);
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
-    });
-    if (error) setMessage(`Error: ${error.message}`);
-    setLoading(false);
-  };
+
 
   return (
     <div style={{ display: "flex", justifyContent: "center", padding: "clamp(20px, 5vw, 40px) clamp(16px, 4vw, 20px)" }}>
@@ -234,15 +226,7 @@ export function AuthWorkflow() {
               </button>
             )}
 
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", margin: "10px 0" }}>
-              <div style={{ flex: 1, height: "2px", background: "black", opacity: 0.1 }} />
-              <span className="font-bebas" style={{ opacity: 0.4 }}>OR</span>
-              <div style={{ flex: 1, height: "2px", background: "black", opacity: 0.1 }} />
-            </div>
 
-            <button type="button" onClick={handleGoogle} className="btn google-btn" disabled={loading}>
-              CONTINUE WITH GOOGLE
-            </button>
           </div>
 
           <Link href="/events" className="font-bebas arena-link">
@@ -258,7 +242,7 @@ export function AuthWorkflow() {
         .auth-input { padding: 16px; border: 3px solid black; }
         .auth-grid-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
         .auth-submit { width: 100%; padding: 18px; justify-content: center; font-size: 1.6rem; }
-        .google-btn { width: 100%; justify-content: center; background: white; font-size: 1.2rem; padding: 16px; }
+
         .arena-link { text-align: center; opacity: 0.5; text-decoration: none; font-size: 0.9rem; margin-top: 10px; }
 
         @media (max-width: 480px) {
@@ -266,7 +250,7 @@ export function AuthWorkflow() {
           .auth-grid-row { grid-template-columns: 1fr; }
           .auth-submit { font-size: 1.3rem; padding: 14px; }
           .mode-btn { font-size: 1rem; padding: 10px; }
-          .google-btn { font-size: 1rem; padding: 12px; }
+
         }
       `}</style>
     </div>
