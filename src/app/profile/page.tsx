@@ -95,13 +95,13 @@ export default function ProfilePage() {
         .stat-item { padding: 30px; }
 
         @media (max-width: 768px) {
-          .profile-stats-grid { gridTemplateColumns: 1fr 1fr; }
+          .profile-stats-grid { grid-template-columns: 1fr 1fr; }
           .stat-item { padding: 20px; }
           .stat-val { font-size: 2.2rem; }
         }
 
         @media (max-width: 480px) {
-          .profile-stats-grid { gridTemplateColumns: 1fr; }
+          .profile-stats-grid { grid-template-columns: 1fr; }
           .bio-card { padding: 20px; }
         }
       `}</style>

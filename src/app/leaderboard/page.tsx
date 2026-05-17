@@ -98,8 +98,8 @@ export default function LeaderboardPage() {
           margin-bottom: 80px; height: 320px; 
         }
         .podium-item { 
-          display: flex; flexDirection: column; alignItems: center; justifyContent: center; 
-          textAlign: center; position: relative; 
+          display: flex; flex-direction: column; align-items: center; justify-content: center; 
+          text-align: center; position: relative; 
         }
         .rank-2 { width: 180px; height: 200px; }
         .rank-1 { width: 220px; height: 280px; z-index: 10; }
@@ -118,7 +118,7 @@ export default function LeaderboardPage() {
         .rank-num { font-size: 1.6rem; width: 50px; color: var(--pink); }
         .name-text { font-size: 1.3rem; }
         .level-text { font-size: 0.8rem; opacity: 0.6; }
-        .xp-num { font-size: 1.6rem; color: var(--green); display: flex; alignItems: center; gap: 6px; }
+        .xp-num { font-size: 1.6rem; color: var(--green); display: flex; align-items: center; gap: 6px; }
 
         @media (max-width: 768px) {
           .podium-container { flex-direction: column; height: auto; align-items: stretch; gap: 30px; }

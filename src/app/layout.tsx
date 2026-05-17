@@ -3,6 +3,8 @@ import "./globals.css";
 import SiteShell from "@/components/SiteShell";
 import { VeltrixProvider } from "@/lib/store";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "ANITS VELTRIX | Where Campus Legends Rise",
   description:

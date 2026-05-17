@@ -253,17 +253,17 @@ export function AuthWorkflow() {
 
       <style jsx>{`
         .auth-card { padding: 40px; }
-        .auth-label { display: flex; flexDirection: column; gap: 8px; }
-        .field-title { fontSize: 1.2rem; letterSpacing: 1px; }
+        .auth-label { display: flex; flex-direction: column; gap: 8px; }
+        .field-title { font-size: 1.2rem; letter-spacing: 1px; }
         .auth-input { padding: 16px; border: 3px solid black; }
-        .auth-grid-row { display: grid; gridTemplateColumns: 1fr 1fr; gap: 16px; }
-        .auth-submit { width: 100%; padding: 18px; justifyContent: center; fontSize: 1.6rem; }
-        .google-btn { width: 100%; justifyContent: center; background: white; font-size: 1.2rem; padding: 16px; }
-        .arena-link { textAlign: center; opacity: 0.5; textDecoration: none; fontSize: 0.9rem; marginTop: 10px; }
+        .auth-grid-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .auth-submit { width: 100%; padding: 18px; justify-content: center; font-size: 1.6rem; }
+        .google-btn { width: 100%; justify-content: center; background: white; font-size: 1.2rem; padding: 16px; }
+        .arena-link { text-align: center; opacity: 0.5; text-decoration: none; font-size: 0.9rem; margin-top: 10px; }
 
         @media (max-width: 480px) {
           .auth-card { padding: 24px; }
-          .auth-grid-row { gridTemplateColumns: 1fr; }
+          .auth-grid-row { grid-template-columns: 1fr; }
           .auth-submit { font-size: 1.3rem; padding: 14px; }
           .mode-btn { font-size: 1rem; padding: 10px; }
           .google-btn { font-size: 1rem; padding: 12px; }

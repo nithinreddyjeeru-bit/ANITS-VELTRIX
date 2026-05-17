@@ -237,7 +237,13 @@ export default function EventDetailPage() {
   const CategoryIcon = getCategoryIcon(event.category);
 
   return (
-    <div className="event-detail-page" style={{ background: "#F5F5F5", minHeight: "100vh" }}>
+    <div className="event-detail-page" style={{ 
+      background: "#F5F5F5", 
+      minHeight: "100vh",
+      "--theme-accent": theme.accent,
+      "--theme-secondary": theme.secondary,
+      "--theme-glow": theme.glow
+    } as React.CSSProperties}>
       <div className="dynamic-bg" style={{ opacity: 0.2 }} />
 
       {/* COMPACT HERO */}
@@ -513,15 +519,15 @@ export default function EventDetailPage() {
         
         .hero-section { padding: 80px var(--side-padding) 100px; }
         .hero-container { display: grid; grid-template-columns: 1fr 360px; gap: 60px; align-items: center; }
-        .event-title { font-size: clamp(3rem, 6vw, 5.5rem); text-shadow: 5px 5px 0 ${theme.accent}, 10px 10px 0 black; }
+        .event-title { font-size: clamp(3rem, 6vw, 5.5rem); text-shadow: 5px 5px 0 var(--theme-accent), 10px 10px 0 black; }
         
         .main-content { grid-template-columns: 1fr 360px; gap: 60px; padding: 60px var(--side-padding); }
         .story-column { gap: 60px; }
         .description-text { font-size: 1.2rem; line-height: 1.6; opacity: 0.8; }
         .info-cards { grid-template-columns: 1fr 1fr; }
-        .rewards-card { padding: 48px; box-shadow: 15px 15px 0 ${theme.accent}; }
+        .rewards-card { padding: 48px; box-shadow: 15px 15px 0 var(--theme-accent); }
         .reward-icon { width: 70px; height: 70px; }
-        .reward-title { font-size: 3rem; color: ${theme.secondary}; }
+        .reward-title { font-size: 3rem; color: var(--theme-secondary); }
         .prize-pool-text { font-size: 4rem; }
         .stat-val { font-size: 3.5rem; }
         
@@ -537,14 +543,14 @@ export default function EventDetailPage() {
 
         @media (max-width: 768px) {
           .hero-section { padding: 60px 20px 80px; }
-          .event-title { font-size: 2.8rem; text-shadow: 4px 4px 0 ${theme.accent}, 8px 8px 0 black; }
+          .event-title { font-size: 2.8rem; text-shadow: 4px 4px 0 var(--theme-accent), 8px 8px 0 black; }
           .hero-meta { gap: 15px; font-size: 0.9rem; }
           .description-text { font-size: 1.1rem; }
           .info-cards { grid-template-columns: 1fr; }
           .rewards-card { padding: 32px 20px; }
-          .reward-title { fontSize: 2rem; }
-          .prize-pool-text { fontSize: 2.8rem; }
-          .stat-val { fontSize: 2.5rem; }
+          .reward-title { font-size: 2rem; }
+          .prize-pool-text { font-size: 2.8rem; }
+          .stat-val { font-size: 2.5rem; }
           .related-section { padding: 40px 20px; }
           .main-content { padding-bottom: 100px; }
         }

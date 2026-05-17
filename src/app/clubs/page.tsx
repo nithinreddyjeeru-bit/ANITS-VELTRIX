@@ -71,7 +71,7 @@ export default function ClubsPage() {
       <style jsx>{`
         @media (max-width: 480px) {
           .clubs-toolbar { padding: 16px; }
-          .clubs-grid { gridTemplateColumns: 1fr; }
+          .clubs-grid { grid-template-columns: 1fr; }
         }
       `}</style>
     </>
