@@ -56,7 +56,9 @@ export interface Registration {
   id: string;
   user_id: string;
   event_id: string;
-  status: 'confirmed' | 'cancelled' | 'attended';
+  status: 'pending' | 'approved' | 'paid' | 'confirmed' | 'attended' | 'certified';
+  payment_status: 'pending' | 'paid' | 'free';
+  certificate_status: 'pending' | 'generated';
   qr_token: string;
   team_id?: string;
   registered_at: string;
@@ -146,6 +148,8 @@ export interface Team {
   event_id: string;
   leader_id: string;
   max_size: number;
+  invite_code?: string;
+  status: 'pending' | 'confirmed';
   created_at: string;
   members?: TeamMember[];
 }
@@ -154,7 +158,8 @@ export interface TeamMember {
   id: string;
   team_id: string;
   user_id: string;
-  role: string;
+  role: 'leader' | 'member';
+  status: 'pending' | 'approved';
   joined_at: string;
   profile?: Profile;
 }
