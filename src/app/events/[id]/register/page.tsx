@@ -420,7 +420,7 @@ export default function RegisterPage() {
 
   return (
     <div className="register-page font-space">
-      <div className="register-shell">
+      <div className="veltrix-register-shell">
         <Link href={`/events/${id}`} className="font-bebas register-back">
           <ArrowLeft size={16} /> BACK TO EVENT
         </Link>
@@ -657,10 +657,10 @@ export default function RegisterPage() {
                       </label>
                     </div>
 
-                    <div className="section-divider" style={{ margin: "24px 0", borderTop: "2px dashed #000" }} />
-                    <h3 className="font-bebas form-section-title" style={{ fontSize: "1.5rem", marginBottom: "15px" }}>⚡ SQUAD LEAD PROFILE DETAILS</h3>
+                    <div className="section-divider" />
+                    <h3 className="font-bebas form-section-title">⚡ SQUAD LEAD PROFILE DETAILS</h3>
                     
-                    <div className="inputs-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
+                    <div className="inputs-grid-2col">
                       <label className="input-label">
                         <span className="font-bebas">Your Squad Role</span>
                         <input 
@@ -684,7 +684,7 @@ export default function RegisterPage() {
                       </label>
                     </div>
 
-                    <div className="inputs-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
+                    <div className="inputs-grid-2col">
                       <label className="input-label">
                         <span className="font-bebas">Registration Number</span>
                         <input 
@@ -715,7 +715,7 @@ export default function RegisterPage() {
                       </label>
                     </div>
 
-                    <div className="inputs-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
+                    <div className="inputs-grid-2col">
                       <label className="input-label">
                         <span className="font-bebas">Current Year</span>
                         <select 
@@ -742,7 +742,7 @@ export default function RegisterPage() {
                       </label>
                     </div>
 
-                    <div className="inputs-grid" style={{ display: "grid", gridTemplateColumns: "1fr", gap: "16px", marginBottom: "20px" }}>
+                    <div className="inputs-grid-1col">
                       <label className="input-label">
                         <span className="font-bebas">Skills & Tech Stack (Optional)</span>
                         <input 
@@ -908,10 +908,12 @@ export default function RegisterPage() {
           min-height: 100vh;
           background: #F5F5F5;
           padding: 40px clamp(16px, 4vw, 20px);
+          width: 100%;
         }
-        .register-shell {
+        .veltrix-register-shell {
           max-width: 800px;
           margin: 0 auto;
+          width: 100%;
         }
         .register-back {
           display: inline-flex;
@@ -1010,6 +1012,29 @@ export default function RegisterPage() {
           flex-direction: column;
           gap: 20px;
           margin-bottom: 30px;
+        }
+        .inputs-grid-2col {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 16px;
+          margin-bottom: 16px;
+        }
+        .inputs-grid-1col {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 16px;
+          margin-bottom: 20px;
+        }
+        .form-section-title {
+          font-family: 'Bebas Neue', sans-serif;
+          font-size: 1.5rem;
+          margin-bottom: 15px;
+          letter-spacing: 0.5px;
+        }
+        .section-divider {
+          margin: 24px 0;
+          border-top: 2px dashed #000;
+          height: 0;
         }
         .input-label {
           display: flex;
@@ -1260,7 +1285,7 @@ export default function RegisterPage() {
         }
 
         @media (max-width: 768px) {
-          .selection-grid, .squad-options {
+          .selection-grid, .squad-options, .inputs-grid-2col {
             grid-template-columns: 1fr;
           }
           .main-heading {

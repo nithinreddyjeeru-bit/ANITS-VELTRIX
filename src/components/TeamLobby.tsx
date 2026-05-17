@@ -707,6 +707,29 @@ export default function TeamLobby({ teamId, userId, isLead, onLeaveOrDisband }: 
             grid-template-columns: 1fr;
           }
         }
+        @media (max-width: 600px) {
+          .squad-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+          }
+          .invite-tag {
+            width: 100%;
+            justify-content: space-between;
+          }
+          .member-card {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+          }
+          .readiness-indicator {
+            width: 100%;
+            text-align: center;
+          }
+          .chat-bubble {
+            max-width: 95%;
+          }
+        }
       `}</style>
     </div>
   );
