@@ -325,6 +325,9 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
             <div className="footer-brand">
               <div className="font-bangers brand-text">VELTRIX</div>
               <div className="font-bebas sub-brand">CAMPUS UNIVERSE</div>
+              <p className="font-space" style={{ fontSize: "0.8rem", color: "var(--green)", letterSpacing: "1px", marginBottom: "10px", opacity: 0.85 }}>
+                A platform by Anil Neerukonda Institute of Technology &amp; Sciences
+              </p>
               <p className="font-space brand-desc">
                 The ultimate futuristic comic-book campus universe. Built for the next generation of innovators at ANITS.
               </p>
@@ -373,7 +376,12 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
           </div>
 
           <div className="footer-bottom font-space">
-            <p className="copy-text">© 2026 VELTRIX UNIVERSE · ANITS · ALL RIGHTS RESERVED</p>
+            <div>
+              <p className="copy-text">© 2026 VELTRIX UNIVERSE · ALL RIGHTS RESERVED</p>
+              <p style={{ opacity: 0.4, fontSize: "0.78rem", marginTop: "4px" }}>
+                Anil Neerukonda Institute of Technology &amp; Sciences (ANITS) · Sangivalasa, Visakhapatnam, AP — 531 163
+              </p>
+            </div>
             <div className="legal-links">
               <Link href="/privacy-policy" style={{ color: "inherit", textDecoration: "none" }}>Privacy Policy</Link>
               <Link href="/terms-and-conditions" style={{ color: "inherit", textDecoration: "none" }}>Terms of Service</Link>
