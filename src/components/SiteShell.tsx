@@ -331,15 +331,41 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
             </div>
 
             {[
-              { title: "UNIVERSE", links: ["Battle Arena", "Club Houses", "Hall of Fame", "The Forge"] },
-              { title: "COMMUNITY", links: ["Leaderboards", "Certificates", "XP System", "Teams"] },
-              { title: "LEGAL", links: ["Privacy Policy", "Terms of Use", "Contact Us", "About"] },
+              {
+                title: "UNIVERSE",
+                links: [
+                  { label: "Events", href: "/events" },
+                  { label: "Clubs", href: "/clubs" },
+                  { label: "Leaderboard", href: "/leaderboard" },
+                  { label: "About", href: "/about" },
+                ],
+              },
+              {
+                title: "COMMUNITY",
+                links: [
+                  { label: "Leaderboards", href: "/leaderboard" },
+                  { label: "Certificates", href: "/certificates" },
+                  { label: "Dashboard", href: dashHref },
+                  { label: "Notifications", href: "/notifications" },
+                ],
+              },
+              {
+                title: "LEGAL",
+                links: [
+                  { label: "Privacy Policy", href: "/privacy-policy" },
+                  { label: "Terms & Conditions", href: "/terms-and-conditions" },
+                  { label: "Refund Policy", href: "/refund-policy" },
+                  { label: "Contact Us", href: "/contact" },
+                ],
+              },
             ].map((col) => (
               <div key={col.title} className="footer-col">
                 <h4 className="font-bebas col-title">{col.title}</h4>
                 <ul className="font-space footer-links">
                   {col.links.map((l) => (
-                    <li key={l} className="footer-li">{l}</li>
+                    <li key={l.label} className="footer-li">
+                      <Link href={l.href} style={{ color: "inherit", textDecoration: "none" }}>{l.label}</Link>
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -349,8 +375,9 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
           <div className="footer-bottom font-space">
             <p className="copy-text">© 2026 VELTRIX UNIVERSE · ANITS · ALL RIGHTS RESERVED</p>
             <div className="legal-links">
-              <span>Privacy Policy</span>
-              <span>Terms of Service</span>
+              <Link href="/privacy-policy" style={{ color: "inherit", textDecoration: "none" }}>Privacy Policy</Link>
+              <Link href="/terms-and-conditions" style={{ color: "inherit", textDecoration: "none" }}>Terms of Service</Link>
+              <Link href="/refund-policy" style={{ color: "inherit", textDecoration: "none" }}>Refund Policy</Link>
             </div>
           </div>
         </footer>
