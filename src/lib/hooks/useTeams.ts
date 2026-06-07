@@ -25,18 +25,20 @@ export function useEventTeams(eventId: string) {
       .eq("event_id", eventId)
       .order("created_at", { ascending: false });
 
-    const withMembers: TeamWithMembers[] = [];
-    for (const t of teamRows || []) {
-      const { data: members } = await supabase
-        .from("team_members")
-        .select("*, profile:profiles(name, email)")
-        .eq("team_id", t.id);
-      withMembers.push({
-        ...t,
-        members: members || [],
-        member_count: members?.length || 0,
-      });
-    }
+    const teamIds = (teamRows || []).map((t) => t.id);
+
+    // Single batched query for all members across these teams (no N+1 loop).
+    const { data: allMembers } = teamIds.length
+      ? await supabase
+          .from("team_members")
+          .select("*, profile:profiles(name, email)")
+          .in("team_id", teamIds)
+      : { data: [] as any[] };
+
+    const withMembers: TeamWithMembers[] = (teamRows || []).map((t) => {
+      const members = (allMembers || []).filter((m) => m.team_id === t.id);
+      return { ...t, members, member_count: members.length };
+    });
     setTeams(withMembers);
 
     if (user) {

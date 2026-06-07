@@ -9,6 +9,7 @@ import { useAdminStats, useAllUsers, useAuditLogs, sendAnnouncement } from "@/li
 import { deleteEvent } from "@/lib/hooks/useEvents";
 import { AdminAttendanceScanner } from "@/components/AdminAttendanceScanner";
 import { AdminCertificateIssuer } from "@/components/AdminCertificateIssuer";
+import { useToast } from "@/components/Toast";
 import { Users, Calendar, Award, LogOut, CheckCircle, Shield } from "lucide-react";
 
 function StatCard({ label, value, icon, color }: { label: string; value: string | number; icon: React.ReactNode; color: string }) {
@@ -23,6 +24,7 @@ function StatCard({ label, value, icon, color }: { label: string; value: string 
 
 export default function AdminDashboard() {
   const router = useRouter();
+  const toaster = useToast();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [activeTab, setActiveTab] = useState<"overview" | "users" | "events" | "certs" | "logs">("overview");
   const [showScanner, setShowScanner] = useState(false);
@@ -57,17 +59,35 @@ export default function AdminDashboard() {
   };
 
   const handleAnnouncement = async () => {
-    if (!profile || !anncTitle.trim() || !anncBody.trim()) return;
-    await sendAnnouncement(anncTitle, anncBody, profile.id, true);
-    setAnncTitle("");
-    setAnncBody("");
-    alert("Global announcement posted.");
+    if (!profile || !anncTitle.trim() || !anncBody.trim()) {
+      toaster.warning("Missing details", "Add a title and message before posting.");
+      return;
+    }
+    try {
+      await sendAnnouncement(anncTitle, anncBody, profile.id, true);
+      setAnncTitle("");
+      setAnncBody("");
+      toaster.success("Announcement posted", "Every student will see it on the ticker.");
+    } catch (e: any) {
+      toaster.error("Could not post", e.message);
+    }
   };
 
-  const handleDeleteEvent = async (id: string) => {
-    if (!confirm("Delete this event?")) return;
-    await deleteEvent(id);
-    await refreshEvents();
+  const handleDeleteEvent = async (id: string, title: string) => {
+    const ok = await toaster.confirm({
+      title: "Delete this event?",
+      body: `"${title}" and its registrations will be removed. This can't be undone.`,
+      confirmLabel: "DELETE",
+      danger: true,
+    });
+    if (!ok) return;
+    try {
+      await deleteEvent(id);
+      await refreshEvents();
+      toaster.success("Event deleted");
+    } catch (e: any) {
+      toaster.error("Delete failed", e.message);
+    }
   };
 
   const signOut = async () => {
@@ -175,7 +195,12 @@ export default function AdminDashboard() {
                   <td style={{ padding: "12px" }}>
                     <select
                       value={u.role}
-                      onChange={(e) => updateRole(u.id, e.target.value as any)}
+                      onChange={(e) => {
+                        const role = e.target.value as any;
+                        updateRole(u.id, role)
+                          .then(() => toaster.success("Role updated", `${u.name} is now ${role.replace("_", " ")}.`))
+                          .catch((err) => toaster.error("Update failed", err.message));
+                      }}
                       style={{ padding: "4px", border: "2px solid var(--black)", fontFamily: "inherit", background: u.role === "admin" ? "var(--pink)" : "white" }}
                       disabled={u.id === profile.id}
                     >
@@ -187,7 +212,11 @@ export default function AdminDashboard() {
                   <td style={{ padding: "12px", color: "var(--green)", fontWeight: "bold" }}>{u.xp}</td>
                   <td style={{ padding: "12px" }}>
                     <button
-                      onClick={() => toggleBan(u.id, u.is_banned)}
+                      onClick={() =>
+                        toggleBan(u.id, u.is_banned)
+                          .then(() => toaster.success(u.is_banned ? "User unbanned" : "User banned", u.name))
+                          .catch((err) => toaster.error("Action failed", err.message))
+                      }
                       disabled={u.id === profile.id}
                       className="btn" style={{ padding: "4px 8px", fontSize: "0.8rem", background: u.is_banned ? "var(--green)" : "var(--pink)" }}
                     >
@@ -218,8 +247,9 @@ export default function AdminDashboard() {
                   <td style={{ padding: "12px" }}><Link href={`/events/${ev.id}`}>{ev.title}</Link></td>
                   <td style={{ padding: "12px", opacity: 0.7 }}>{new Date(ev.event_date).toLocaleDateString()}</td>
                   <td style={{ padding: "12px" }}>{ev.status}</td>
-                  <td style={{ padding: "12px" }}>
-                    <button type="button" className="btn btn-pink" style={{ padding: "4px 10px", fontSize: "0.8rem" }} onClick={() => handleDeleteEvent(ev.id)}>DELETE</button>
+                  <td style={{ padding: "12px", display: "flex", gap: "8px" }}>
+                    <Link href={`/dashboard/events/${ev.id}/edit`} className="btn" style={{ padding: "4px 10px", fontSize: "0.8rem" }}>EDIT</Link>
+                    <button type="button" className="btn btn-pink" style={{ padding: "4px 10px", fontSize: "0.8rem" }} onClick={() => handleDeleteEvent(ev.id, ev.title)}>DELETE</button>
                   </td>
                 </tr>
               ))}

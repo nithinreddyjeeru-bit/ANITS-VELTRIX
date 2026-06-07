@@ -103,6 +103,12 @@ export function AuthWorkflow() {
       if (error) setMessage(`Error: ${error.message}`);
       else if (data.user) {
         const profile = await ensureProfile(data.user);
+        if (profile.is_banned) {
+          await supabase.auth.signOut();
+          setMessage("Error: Your account has been suspended. Contact the organizers.");
+          setLoading(false);
+          return;
+        }
         router.replace(dashboardPathForRole(profile.role));
       }
     }

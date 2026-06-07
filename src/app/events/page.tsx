@@ -19,10 +19,21 @@ const CAT_COLORS: Record<string, string> = {
 
 function Skeleton() {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: "40px" }}>
-      {[1,2,3,4,5,6].map(i => (
-        <div key={i} className="brutal-card" style={{ height: "420px", background: "#e8e8e8", animation: "pulse 1.5s ease-in-out infinite" }}>
-          <style>{`@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }`}</style>
+    <div className="skeleton-grid">
+      {[1, 2, 3, 4, 5, 6].map((i) => (
+        <div key={i} className="skeleton-card">
+          <div className="skeleton-block" style={{ height: "8px" }} />
+          <div className="skeleton-block" style={{ height: "184px" }} />
+          <div style={{ padding: "22px", display: "flex", flexDirection: "column", gap: "12px" }}>
+            <div className="skeleton-block" style={{ height: "20px", width: "40%", border: "2px solid #ddd" }} />
+            <div className="skeleton-block" style={{ height: "30px", width: "85%" }} />
+            <div className="skeleton-block" style={{ height: "14px", width: "100%" }} />
+            <div className="skeleton-block" style={{ height: "14px", width: "70%" }} />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "8px" }}>
+              <div className="skeleton-block" style={{ height: "44px" }} />
+              <div className="skeleton-block" style={{ height: "44px" }} />
+            </div>
+          </div>
         </div>
       ))}
     </div>

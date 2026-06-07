@@ -101,6 +101,7 @@ export function EventCreationForm() {
   });
 
   const [dragActive, setDragActive] = useState(false);
+  const [bannerFile, setBannerFile] = useState<File | null>(null);
   const bannerInputRef = useRef<HTMLInputElement>(null);
 
   const nextStep = () => setStep(s => Math.min(s + 1, STEPS.length));
@@ -120,6 +121,7 @@ export function EventCreationForm() {
     }
 
     if (file) {
+      setBannerFile(file);
       const url = URL.createObjectURL(file);
       setForm(prev => ({ ...prev, banner_url: url }));
     }
@@ -131,8 +133,18 @@ export function EventCreationForm() {
     setError("");
 
     try {
+      // Upload the banner to Supabase Storage (the blob: preview URL is not persistable).
+      let bannerUrl = form.banner_url || "";
+      if (bannerFile) {
+        const { uploadEventBanner } = await import("@/lib/storage");
+        bannerUrl = await uploadEventBanner(user.id, bannerFile);
+      } else if (bannerUrl.startsWith("blob:")) {
+        bannerUrl = "";
+      }
+
       const eventData = {
         ...form,
+        banner_url: bannerUrl,
         status: isDraft ? "draft" : "upcoming",
         created_by: user.id,
         event_date: form.event_date ? new Date(form.event_date).toISOString() : new Date().toISOString(),

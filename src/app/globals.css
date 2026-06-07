@@ -20,11 +20,17 @@
 /* ===== RESET ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+html { scroll-behavior: smooth; }
+
 body {
   background: var(--cream);
   color: var(--black);
   font-family: 'Space Grotesk', sans-serif;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  -webkit-tap-highlight-color: transparent;
 }
 
 ::placeholder {
@@ -1399,4 +1405,133 @@ footer .btn-black {
   position: relative;
   z-index: 1;
   box-shadow: 4px 4px 0 black;
+}
+
+/* ============================================================
+   POLISH LAYER — quality pass, keeps the neo-brutalist identity
+   ============================================================ */
+
+/* Snappier, more tactile button feel + clear disabled state */
+.btn, .funk-btn, .brutal-btn {
+  transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.12s ease;
+  letter-spacing: 0.5px;
+  user-select: none;
+}
+.btn:disabled,
+.btn[disabled],
+.funk-btn:disabled,
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: 3px 3px 0 var(--black) !important;
+  filter: grayscale(0.3);
+}
+
+/* Cards lift a touch more smoothly */
+.card, .poster-card, .mission-card, .feature-cell, .brutal-card {
+  transition: transform 0.16s cubic-bezier(0.34, 1.4, 0.64, 1), box-shadow 0.16s ease;
+}
+
+/* Unified input / select / textarea styling + focus that pops the shadow */
+input, select, textarea {
+  font-family: 'Space Grotesk', sans-serif;
+  transition: box-shadow 0.12s ease, transform 0.12s ease, border-color 0.12s ease;
+}
+input:focus, select:focus, textarea:focus,
+.brutal-card input:focus, .brutal-card select:focus, .brutal-card textarea:focus,
+.auth-input:focus {
+  outline: none;
+  border-color: var(--pink) !important;
+  box-shadow: 4px 4px 0 var(--pink);
+  transform: translate(-1px, -1px);
+}
+
+/* Accessible keyboard focus ring everywhere (mouse users unaffected) */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 2px;
+}
+
+/* Themed text selection */
+::selection { background: var(--pink); color: white; }
+
+/* Themed scrollbar (comic, not default grey) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--pink) var(--cream);
+}
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-track { background: var(--cream); border-left: 2px solid var(--black); }
+::-webkit-scrollbar-thumb {
+  background: var(--pink);
+  border: 2px solid var(--black);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--purple); }
+
+/* Navbar links get a sliding underline instead of a hard jump */
+.nav-a { position: relative; transition: color 0.2s ease; }
+.nav-a::after {
+  content: '';
+  position: absolute;
+  left: 14px; right: 14px; bottom: 0;
+  height: 3px;
+  background: var(--pink);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.22s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.nav-a:hover::after { transform: scaleX(1); }
+.nav-a.nav-active { border-bottom-color: transparent; }
+.nav-a.nav-active::after { transform: scaleX(1); }
+
+/* Navbar search: readable placeholder on the dark bar */
+.navbar input::placeholder { color: rgba(255,255,255,0.6); }
+.navbar input:focus { box-shadow: 0 0 0 3px var(--green); transform: none; border-color: white !important; }
+
+/* Footer link affordance */
+.footer-li { position: relative; width: fit-content; }
+.footer-li:hover { color: var(--green); transform: translateX(4px); }
+.footer-li { transition: opacity 0.2s ease, transform 0.2s ease, color 0.2s ease; }
+
+/* Image rendering for pixel/dicebear avatars stays crisp */
+img { image-rendering: auto; }
+
+/* Skeleton shimmer (comic loading state) */
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: clamp(22px, 3vw, 36px);
+}
+.skeleton-card {
+  border: var(--border);
+  box-shadow: var(--shadow);
+  background: white;
+  overflow: hidden;
+}
+.skeleton-block {
+  background: linear-gradient(100deg, #ececec 30%, #f7f7f7 50%, #ececec 70%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.3s linear infinite;
+}
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Respect reduced-motion: kill the looping decorative animations */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .marquee-inner, .scan-line, .holographic-pass, .dynamic-bg,
+  .float, .animate-float, .vibrate, .lightning-flicker, .glow-xp { animation: none !important; }
 }

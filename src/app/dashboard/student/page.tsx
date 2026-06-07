@@ -46,17 +46,26 @@ export default function StudentDashboard() {
   useEffect(() => {
     fetchDashboardData();
 
-    // Realtime notifications
-    const channel = (supabase.channel("student-notifs") as any)
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "notifications" },
-        (payload: any) => { 
-          setNotifications(prev => [payload.new, ...prev]); 
-          setUnread(prev => prev + 1); 
-        })
-      .subscribe();
+    let channel: ReturnType<typeof supabase.channel> | null = null;
 
-    return () => { 
-      supabase.removeChannel(channel).catch(console.error); 
+    // Realtime notifications — scoped to THIS user only.
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      channel = (supabase.channel(`student-notifs-${user.id}`) as any)
+        .on("postgres_changes", {
+          event: "INSERT", schema: "public", table: "notifications",
+          filter: `user_id=eq.${user.id}`,
+        },
+          (payload: any) => {
+            setNotifications(prev => [payload.new, ...prev]);
+            setUnread(prev => prev + 1);
+          })
+        .subscribe();
+    })();
+
+    return () => {
+      if (channel) supabase.removeChannel(channel).catch(console.error);
     };
   }, [router]);
 
@@ -158,16 +167,14 @@ export default function StudentDashboard() {
       // Simulate Razorpay sandbox delay
       await new Promise(resolve => setTimeout(resolve, 1500));
 
-      // 1. Generate unique QR Token for them now!
-      const secureQrToken = Math.random().toString(36).substring(2, 10).toUpperCase();
-
-      // 2. Update registration to Paid & Confirmed
+      // Confirm payment. The secure qr_token was generated server-side at
+      // registration time (gen_random_bytes) — never regenerate it on the
+      // client with Math.random (weak + collision-prone).
       const { error } = await supabase
         .from("registrations")
         .update({
           status: "confirmed",
           payment_status: "paid",
-          qr_token: secureQrToken
         })
         .eq("id", regId);
 
@@ -553,9 +560,9 @@ export default function StudentDashboard() {
                             ) : (
                               <span className="btn pending-btn font-bebas">AWAITING GENERATION</span>
                             )}
-                            <span className="font-bebas cert-verify-tag">
-                              VERIFY CODE: {cert.verify_code?.toUpperCase()}
-                            </span>
+                            <Link href={`/verify/${cert.verify_code}`} className="font-bebas cert-verify-tag" style={{ color: "inherit" }}>
+                              VERIFY CODE: {cert.verify_code?.toUpperCase()} ↗
+                            </Link>
                           </div>
                         </motion.div>
                       ))}

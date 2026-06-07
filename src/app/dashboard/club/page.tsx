@@ -8,6 +8,7 @@ import type { Event, Profile } from "@/lib/types";
 import { AdminAttendanceScanner } from "@/components/AdminAttendanceScanner";
 import { AdminCertificateIssuer } from "@/components/AdminCertificateIssuer";
 import { deleteEvent } from "@/lib/hooks/useEvents";
+import { useToast } from "@/components/Toast";
 import { Calendar, CheckCircle, FileBadge, LogOut, Plus, Trash2 } from "lucide-react";
 
 function CreatorStat({ label, value, icon }: { label: string; value: string | number; icon: React.ReactNode }) {
@@ -22,6 +23,7 @@ function CreatorStat({ label, value, icon }: { label: string; value: string | nu
 
 export default function ClubAdminDashboard() {
   const router = useRouter();
+  const toaster = useToast();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
   const [attendanceCount, setAttendanceCount] = useState(0);
@@ -63,10 +65,21 @@ export default function ClubAdminDashboard() {
     init();
   }, [router]);
 
-  const removeOwnEvent = async (id: string) => {
-    if (!confirm("Delete this event?")) return;
-    await deleteEvent(id);
-    setEvents((prev) => prev.filter((event) => event.id !== id));
+  const removeOwnEvent = async (id: string, title: string) => {
+    const ok = await toaster.confirm({
+      title: "Delete this event?",
+      body: `"${title}" and its registrations will be removed. This can't be undone.`,
+      confirmLabel: "DELETE",
+      danger: true,
+    });
+    if (!ok) return;
+    try {
+      await deleteEvent(id);
+      setEvents((prev) => prev.filter((event) => event.id !== id));
+      toaster.success("Event deleted");
+    } catch (e: any) {
+      toaster.error("Delete failed", e.message);
+    }
   };
 
   const signOut = async () => {
@@ -136,8 +149,9 @@ export default function ClubAdminDashboard() {
                     <td style={{ padding: "12px" }}><Link href={`/events/${event.id}`}>{event.title}</Link></td>
                     <td style={{ padding: "12px", opacity: 0.7 }}>{new Date(event.event_date).toLocaleDateString()}</td>
                     <td style={{ padding: "12px" }}>{event.status}</td>
-                    <td style={{ padding: "12px", textAlign: "center" }}>
-                      <button type="button" className="btn btn-pink" style={{ padding: "4px 10px", fontSize: "0.8rem" }} onClick={() => removeOwnEvent(event.id)}>
+                    <td style={{ padding: "12px", textAlign: "center", display: "flex", gap: "8px", justifyContent: "center" }}>
+                      <Link href={`/dashboard/events/${event.id}/edit`} className="btn" style={{ padding: "4px 10px", fontSize: "0.8rem" }}>EDIT</Link>
+                      <button type="button" className="btn btn-pink" style={{ padding: "4px 10px", fontSize: "0.8rem" }} onClick={() => removeOwnEvent(event.id, event.title)}>
                         <Trash2 size={14} /> DELETE
                       </button>
                     </td>

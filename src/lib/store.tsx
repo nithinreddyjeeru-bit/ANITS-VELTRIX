@@ -76,6 +76,18 @@ export function VeltrixProvider({ children }: { children: React.ReactNode }) {
     } else {
       p = row as Profile;
     }
+
+    // Enforce bans at the session layer: a banned user is signed straight out.
+    if (p.is_banned) {
+      await supabase.auth.signOut();
+      setProfile(null);
+      setUser(null);
+      if (typeof window !== "undefined") {
+        window.alert("Your account has been suspended. Contact the organizers.");
+      }
+      return;
+    }
+
     setProfile(p);
     setUser(mapProfileToUser(p, email));
   }, []);

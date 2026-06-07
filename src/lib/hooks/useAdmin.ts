@@ -51,12 +51,14 @@ export function useAllUsers() {
   }, []);
 
   const updateRole = async (userId: string, role: "student" | "admin" | "club_admin") => {
-    await supabase.from("profiles").update({ role }).eq("id", userId);
+    const { error } = await supabase.rpc("admin_set_role", { target_id: userId, new_role: role });
+    if (error) throw error;
     setUsers(prev => prev.map(u => u.id === userId ? { ...u, role } : u));
   };
 
   const toggleBan = async (userId: string, isBanned: boolean) => {
-    await supabase.from("profiles").update({ is_banned: !isBanned }).eq("id", userId);
+    const { error } = await supabase.rpc("admin_set_ban", { target_id: userId, banned: !isBanned });
+    if (error) throw error;
     setUsers(prev => prev.map(u => u.id === userId ? { ...u, is_banned: !isBanned } : u));
   };
 

@@ -7,6 +7,7 @@ import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import type { Event, Profile } from "@/lib/types";
 import ComicProgress from "@/components/ComicProgress";
+import { useToast } from "@/components/Toast";
 import { 
   CheckCircle, ArrowLeft, Calendar, MapPin, QrCode, 
   ShieldCheck, Ticket, Users, PlusCircle, Search, 
@@ -27,6 +28,7 @@ interface ActiveTeamDisplay {
 export default function RegisterPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
+  const toaster = useToast();
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);

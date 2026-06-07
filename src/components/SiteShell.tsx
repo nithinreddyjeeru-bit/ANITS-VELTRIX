@@ -317,7 +317,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
       </motion.main>
 
       {/* Footer */}
-      {!isHome && (
+      {(
         <footer className="site-footer">
           <div className="zigzag-bar" style={{ position: "absolute", top: "-27px", left: 0, right: 0, background: "var(--cream)", zIndex: 5 }} />
 
@@ -349,8 +349,8 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
           <div className="footer-bottom font-space">
             <p className="copy-text">© 2026 VELTRIX UNIVERSE · ANITS · ALL RIGHTS RESERVED</p>
             <div className="legal-links">
-              <span>PRIVACY.EXE</span>
-              <span>TERMS.CMD</span>
+              <span>Privacy Policy</span>
+              <span>Terms of Service</span>
             </div>
           </div>
         </footer>

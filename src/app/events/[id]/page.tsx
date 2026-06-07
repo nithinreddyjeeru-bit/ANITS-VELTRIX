@@ -35,7 +35,6 @@ import {
   Info,
   HelpCircle
 } from "lucide-react";
-import { TeamPortal } from "@/components/TeamPortal";
 import { getCategoryIcon } from "@/lib/category-icons";
 
 // ============================================================
@@ -189,9 +188,9 @@ export default function EventDetailPage() {
 
       const { data: regs, count } = await supabase
         .from("registrations")
-        .select("id, created_at, profiles(id, name)")
+        .select("id, registered_at, profiles(id, name)", { count: "exact" })
         .eq("event_id", id)
-        .order("created_at", { ascending: false });
+        .order("registered_at", { ascending: false });
       
       setRegCount(count || 0);
       

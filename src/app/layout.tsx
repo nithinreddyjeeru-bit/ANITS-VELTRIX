@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import SiteShell from "@/components/SiteShell";
 import { VeltrixProvider } from "@/lib/store";
+import { ToastProvider } from "@/components/Toast";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +21,9 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <VeltrixProvider>
-          <SiteShell>{children}</SiteShell>
+          <ToastProvider>
+            <SiteShell>{children}</SiteShell>
+          </ToastProvider>
         </VeltrixProvider>
       </body>
     </html>
