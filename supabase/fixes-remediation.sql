@@ -67,6 +67,7 @@ create policy "profiles_read_all" on public.profiles
   using (auth.uid() is not null);
 
 -- 5. Update leaderboard view (remove email column)
+drop view if exists public.leaderboard cascade;
 create or replace view public.leaderboard as
 select
   p.id,
