@@ -80,7 +80,7 @@ export default function PrivacyPolicy() {
       {/* Body */}
       <div style={{ maxWidth: "820px", margin: "0 auto", padding: "60px var(--side-padding) 100px" }}>
         <p className="font-space" style={{ lineHeight: "1.8", fontSize: "1rem", marginBottom: "48px", opacity: 0.75 }}>
-          VELTRIX ("we", "us", or "our") is committed to protecting your privacy. This policy explains what information
+          VELTRIX (&quot;we&quot;, &quot;us&quot;, or &quot;our&quot;) is committed to protecting your privacy. This policy explains what information
           we collect, how we use it, and the choices you have. By using the VELTRIX platform, you agree to the practices
           described below.
         </p>

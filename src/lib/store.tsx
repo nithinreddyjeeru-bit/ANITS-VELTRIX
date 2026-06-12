@@ -107,12 +107,25 @@ export function VeltrixProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let mounted = true;
 
+    const setSessionCookies = (session: any) => {
+      if (typeof document !== "undefined") {
+        if (session) {
+          document.cookie = `sb-access-token=${session.access_token}; path=/; max-age=${session.expires_in}; SameSite=Lax; Secure`;
+          document.cookie = `sb-refresh-token=${session.refresh_token}; path=/; max-age=${session.expires_in}; SameSite=Lax; Secure`;
+        } else {
+          document.cookie = "sb-access-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+          document.cookie = "sb-refresh-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        }
+      }
+    };
+
     const init = async () => {
       try {
         const {
           data: { session },
         } = await supabase.auth.getSession();
         if (!mounted) return;
+        setSessionCookies(session);
         if (session?.user) {
           await loadProfileForSession(session.user.id, session.user.email ?? null);
         } else {
@@ -132,6 +145,7 @@ export function VeltrixProvider({ children }: { children: React.ReactNode }) {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!mounted) return;
+      setSessionCookies(session);
       if (session?.user) {
         loadProfileForSession(session.user.id, session.user.email ?? null);
       } else {
@@ -149,6 +163,10 @@ export function VeltrixProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     await supabase.auth.signOut();
+    if (typeof document !== "undefined") {
+      document.cookie = "sb-access-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      document.cookie = "sb-refresh-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    }
     setUser(null);
     setProfile(null);
   };

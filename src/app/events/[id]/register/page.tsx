@@ -71,7 +71,7 @@ export default function RegisterPage() {
   const [successTeamCode, setSuccessTeamCode] = useState("");
   const [pendingJoinTeam, setPendingJoinTeam] = useState("");
 
-  const soloStepsNames = ["Personal Info", "College Info", "Review Details", "Checkout Pass"];
+  const soloStepsNames = ["Personal Info", "College Info", "Review Details", "Confirm Pass"];
 
   useEffect(() => {
     const init = async () => {
@@ -141,7 +141,7 @@ export default function RegisterPage() {
     }
   }, [flow, teamOption]);
 
-  const fetchActiveTeams = async () => {
+  async function fetchActiveTeams() {
     try {
       setSearchingTeams(true);
       // Fetch teams
@@ -184,9 +184,9 @@ export default function RegisterPage() {
     } finally {
       setSearchingTeams(false);
     }
-  };
+  }
 
-  const generateQR = async (token: string) => {
+  async function generateQR(token: string) {
     const qrData = JSON.stringify({ token, event_id: id, app: "veltrix" });
     const url = await QRCode.toDataURL(qrData, { 
       width: 300, 
@@ -194,7 +194,13 @@ export default function RegisterPage() {
       color: { dark: "#0B0B0B", light: "#FFF6E3" } 
     });
     setQrDataUrl(url);
-  };
+  }
+
+  function createInviteCode() {
+    const bytes = new Uint8Array(4);
+    crypto.getRandomValues(bytes);
+    return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("").slice(0, 6).toUpperCase();
+  }
 
   // --- SOLO FLIGHT HANDLERS ---
   const handleSoloNext = (e: React.FormEvent) => {
@@ -228,17 +234,15 @@ export default function RegisterPage() {
         throw new Error("Sold out! There are no remaining tickets for this mission.");
       }
 
-      // 2. Generate sandboxed payment details
-      const paymentStatus = event.prize_pool ? "paid" : "free";
-
-      // 3. Register user
+      // Register user. Paid registrations must be completed through a trusted
+      // server/webhook integration before payment_status can ever become paid.
       const { data: reg, error: regErr } = await supabase
         .from("registrations")
         .insert({
           user_id: userId,
           event_id: id,
-          status: paymentStatus === "paid" ? "confirmed" : "confirmed", // Solo users go straight to confirmed
-          payment_status: paymentStatus,
+          status: "confirmed",
+          payment_status: "free",
           certificate_status: "pending"
         })
         .select("qr_token")
@@ -274,7 +278,7 @@ export default function RegisterPage() {
     setError("");
 
     try {
-      const inviteCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+      const inviteCode = createInviteCode();
 
       // Update leader profile details in Supabase
       const { error: profileErr } = await supabase
@@ -325,7 +329,7 @@ export default function RegisterPage() {
           event_id: id,
           team_id: teamData.id,
           status: "confirmed",
-          payment_status: event.prize_pool ? "paid" : "free"
+          payment_status: "free"
         })
         .select("qr_token")
         .single();
@@ -380,7 +384,7 @@ export default function RegisterPage() {
           event_id: id,
           team_id: targetTeam.id,
           status: "pending", // Set as pending until accepted
-          payment_status: "pending"
+          payment_status: "free"
         });
 
       if (regErr) throw regErr;
@@ -560,25 +564,21 @@ export default function RegisterPage() {
 
                     <div className="btn-row">
                       <button type="button" className="btn btn-black" onClick={handleSoloPrev}>← EDIT DETAILS</button>
-                      <button type="button" className="btn btn-green next-btn" onClick={() => setSoloStep(3)}>PROCEED TO CHECKOUT →</button>
+                      <button type="button" className="btn btn-green next-btn" onClick={() => setSoloStep(3)}>CONFIRM PASS →</button>
                     </div>
                   </div>
                 )}
 
-                {/* STEP 4: Sandboxed Checkout Payment */}
+                {/* STEP 4: Booking confirmation */}
                 {soloStep === 3 && (
                   <div className="comic-form">
-                    <h2 className="font-bebas step-heading"><CreditCard /> CHECKOUT PASS GATEWAY</h2>
-                    <p className="form-helper">Confirm booking credentials. Sandbox simulation activated.</p>
+                    <h2 className="font-bebas step-heading"><CreditCard /> CONFIRM ENTRY PASS</h2>
+                    <p className="form-helper">Confirm booking credentials. Payment processing is disabled until a verified gateway webhook is configured.</p>
                     
                     <div className="brutal-card payment-card">
-                      <div className="payment-heading font-bebas">TRANSACTION SUMMARY</div>
-                      <div className="payment-row"><span>1x {event?.title} Solo Ticket</span> <span>{event?.prize_pool ? "₹ 150.00" : "FREE"}</span></div>
-                      <div className="payment-row highlight"><strong>Total Due</strong> <strong>{event?.prize_pool ? "₹ 150.00" : "₹ 0.00"}</strong></div>
-                      
-                      <div className="payment-simulation font-space">
-                        ⚡ SANDBOX SECURITY ACTIVE. NO ACTUAL CARD CHARGES.
-                      </div>
+                      <div className="payment-heading font-bebas">BOOKING SUMMARY</div>
+                      <div className="payment-row"><span>1x {event?.title} Solo Ticket</span> <span>FREE</span></div>
+                      <div className="payment-row highlight"><strong>Total Due</strong> <strong>₹ 0.00</strong></div>
                     </div>
 
                     {error && (
@@ -588,7 +588,7 @@ export default function RegisterPage() {
                     <div className="btn-row">
                       <button type="button" className="btn btn-black" onClick={handleSoloPrev}>← PREVIOUS</button>
                       <button type="button" className="btn btn-green next-btn" onClick={handleCompleteSoloRegistration} disabled={submitting}>
-                        {submitting ? "AUTHENTICATING PASS..." : event?.prize_pool ? "PAY & SECURE PASS" : "CLAIM FREE PASS"}
+                        {submitting ? "AUTHENTICATING PASS..." : "CLAIM FREE PASS"}
                       </button>
                     </div>
                   </div>
@@ -757,9 +757,9 @@ export default function RegisterPage() {
                     </div>
 
                     <div className="brutal-card payment-card" style={{ margin: "20px 0" }}>
-                      <div className="payment-heading font-bebas">SQUAD LEAD CHECKOUT</div>
+                      <div className="payment-heading font-bebas">SQUAD PASS SUMMARY</div>
                       <p className="form-helper">Creating team registers you as the confirmed squad leader.</p>
-                      <div className="payment-row highlight"><strong>Total Due</strong> <strong>{event?.prize_pool ? "₹ 150.00" : "₹ 0.00"}</strong></div>
+                      <div className="payment-row highlight"><strong>Total Due</strong> <strong>₹ 0.00</strong></div>
                     </div>
 
                     {error && (
@@ -769,7 +769,7 @@ export default function RegisterPage() {
                     <div className="btn-row">
                       <button type="button" className="btn btn-black" onClick={() => setTeamOption(null)}>← BACK</button>
                       <button type="submit" className="btn btn-green next-btn" disabled={submitting}>
-                        {submitting ? "INITIALIZING ROOM..." : "PAY & DEPLOY SQUAD"}
+                        {submitting ? "INITIALIZING ROOM..." : "DEPLOY SQUAD"}
                       </button>
                     </div>
                   </form>
@@ -861,7 +861,7 @@ export default function RegisterPage() {
                     ⚡ STATUS: PENDING LEAD APPROVAL
                   </div>
                   <p className="form-helper" style={{ margin: "20px 0" }}>
-                    Once approved, your dashboard will unlock the payment step so you can secure your QR pass!
+                    Once approved, your dashboard will unlock your secure QR pass.
                   </p>
                 </>
               ) : (

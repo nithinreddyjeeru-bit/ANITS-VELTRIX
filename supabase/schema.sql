@@ -3,8 +3,9 @@
 -- Run this entire file once in Supabase SQL Editor
 -- ============================================================
 
--- Enable UUID extension
+-- Enable UUID / cryptographic random helpers
 create extension if not exists "uuid-ossp";
+create extension if not exists "pgcrypto";
 
 -- ============================================================
 -- PROFILES (extends auth.users)
@@ -42,7 +43,17 @@ drop policy if exists "profiles_read_own" on public.profiles;
 drop policy if exists "profiles_read_all" on public.profiles;
 create policy "profiles_read_all" on public.profiles for select using (true);
 drop policy if exists "profiles_update_own" on public.profiles;
-create policy "profiles_update_own" on public.profiles for update using (auth.uid() = id);
+drop policy if exists "profiles_update_own_safe" on public.profiles;
+create policy "profiles_update_own_safe" on public.profiles
+  for update
+  using (auth.uid() = id)
+  with check (
+    auth.uid() = id
+    and role = (select role from public.profiles where id = auth.uid())
+    and xp = (select xp from public.profiles where id = auth.uid())
+    and level = (select level from public.profiles where id = auth.uid())
+    and is_banned = (select is_banned from public.profiles where id = auth.uid())
+  );
 drop policy if exists "profiles_update_admin" on public.profiles;
 create policy "profiles_update_admin" on public.profiles for update using (public.current_user_role() = 'admin');
 drop policy if exists "profiles_insert" on public.profiles;
@@ -58,7 +69,7 @@ begin
     coalesce(new.raw_user_meta_data->>'full_name', split_part(new.email,'@',1)),
     new.email,
     new.raw_user_meta_data->>'registration_no',
-    coalesce(new.raw_user_meta_data->>'role', 'student'),
+    'student',
     coalesce(new.raw_user_meta_data->>'department', ''),
     coalesce((new.raw_user_meta_data->>'year')::int, 1),
     coalesce(new.raw_user_meta_data->>'bio', '')
@@ -72,6 +83,39 @@ drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
+
+create or replace function public.admin_set_role(target_id uuid, new_role text)
+returns void language plpgsql security definer set search_path = public as $$
+begin
+  if coalesce(public.current_user_role(), '') <> 'admin' then
+    raise exception 'Only admins can change roles';
+  end if;
+  if new_role not in ('student','admin','club_admin') then
+    raise exception 'Invalid role';
+  end if;
+  update public.profiles set role = new_role, updated_at = now() where id = target_id;
+end;
+$$;
+revoke execute on function public.admin_set_role(uuid, text) from public;
+grant execute on function public.admin_set_role(uuid, text) to authenticated;
+
+create or replace function public.admin_set_ban(target_id uuid, banned boolean)
+returns void language plpgsql security definer set search_path = public as $$
+begin
+  if coalesce(public.current_user_role(), '') <> 'admin' then
+    raise exception 'Only admins can ban users';
+  end if;
+  update public.profiles set is_banned = banned, updated_at = now() where id = target_id;
+end;
+$$;
+revoke execute on function public.admin_set_ban(uuid, boolean) from public;
+grant execute on function public.admin_set_ban(uuid, boolean) to authenticated;
+
+create or replace function public.is_active_user()
+returns boolean language sql security definer set search_path = public stable as $$
+  select coalesce((select not is_banned from public.profiles where id = auth.uid()), false)
+$$;
+grant execute on function public.is_active_user() to authenticated;
 
 -- ============================================================
 -- EVENTS
@@ -138,7 +182,9 @@ create table if not exists public.registrations (
   id            uuid primary key default uuid_generate_v4(),
   user_id       uuid not null references public.profiles(id) on delete cascade,
   event_id      uuid not null references public.events(id) on delete cascade,
-  status        text not null default 'confirmed' check (status in ('confirmed','cancelled','attended')),
+  status        text not null default 'confirmed' check (status in ('pending','approved','paid','confirmed','attended','cancelled','certified')),
+  payment_status text not null default 'free' check (payment_status in ('pending','paid','free')),
+  certificate_status text not null default 'pending' check (certificate_status in ('pending','generated')),
   qr_token      text unique default encode(gen_random_bytes(16), 'hex'),
   team_id       uuid,
   registered_at timestamptz not null default now(),
@@ -157,7 +203,12 @@ create policy "reg_read_own"   on public.registrations for select using (
   )
 );
 drop policy if exists "reg_insert_own" on public.registrations;
-create policy "reg_insert_own" on public.registrations for insert with check (auth.uid() = user_id);
+create policy "reg_insert_own" on public.registrations for insert with check (auth.uid() = user_id and public.is_active_user());
+drop policy if exists "reg_update_own" on public.registrations;
+create policy "reg_update_own" on public.registrations
+  for update
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id and status <> 'attended');
 drop policy if exists "reg_update_admin" on public.registrations;
 create policy "reg_update_admin" on public.registrations for update using (
   exists(select 1 from public.profiles p where p.id=auth.uid() and p.role='admin')
@@ -229,6 +280,18 @@ drop trigger if exists on_club_member_change on public.club_members;
 create trigger on_club_member_change
   after insert or delete on public.club_members
   for each row execute function public.update_club_member_count();
+
+do $$
+begin
+  if not exists (
+    select 1 from information_schema.table_constraints
+    where constraint_name = 'events_club_id_fkey' and table_name = 'events'
+  ) then
+    alter table public.events
+      add constraint events_club_id_fkey
+      foreign key (club_id) references public.clubs(id) on delete set null;
+  end if;
+end $$;
 
 -- ============================================================
 -- BOOKMARKS
@@ -386,6 +449,8 @@ create table if not exists public.teams (
   event_id   uuid not null references public.events(id) on delete cascade,
   leader_id  uuid not null references public.profiles(id),
   max_size   int not null default 4,
+  invite_code text unique default upper(substr(encode(gen_random_bytes(4),'hex'),1,6)),
+  status      text not null default 'confirmed' check (status in ('pending','confirmed')),
   created_at timestamptz not null default now()
 );
 
@@ -393,13 +458,14 @@ alter table public.teams enable row level security;
 drop policy if exists "teams_read_all" on public.teams;
 create policy "teams_read_all"   on public.teams for select using (true);
 drop policy if exists "teams_insert_auth" on public.teams;
-create policy "teams_insert_auth" on public.teams for insert with check (auth.uid() = leader_id);
+create policy "teams_insert_auth" on public.teams for insert with check (auth.uid() = leader_id and public.is_active_user());
 
 create table if not exists public.team_members (
   id        uuid primary key default uuid_generate_v4(),
   team_id   uuid not null references public.teams(id) on delete cascade,
   user_id   uuid not null references public.profiles(id) on delete cascade,
-  role      text not null default 'member',
+  role      text not null default 'member' check (role in ('leader','member')),
+  status    text not null default 'approved' check (status in ('pending','approved')),
   joined_at timestamptz not null default now(),
   unique(team_id, user_id)
 );
@@ -408,9 +474,67 @@ alter table public.team_members enable row level security;
 drop policy if exists "team_members_read_all" on public.team_members;
 create policy "team_members_read_all"  on public.team_members for select using (true);
 drop policy if exists "team_members_insert_own" on public.team_members;
-create policy "team_members_insert_own" on public.team_members for insert with check (auth.uid() = user_id);
+create policy "team_members_insert_own" on public.team_members for insert with check (auth.uid() = user_id and role = 'member' and public.is_active_user());
+drop policy if exists "team_members_leader_insert" on public.team_members;
+create policy "team_members_leader_insert" on public.team_members
+  for insert with check (
+    exists (select 1 from public.teams t where t.id = team_id and t.leader_id = auth.uid())
+  );
+drop policy if exists "team_members_leader_update" on public.team_members;
+create policy "team_members_leader_update" on public.team_members
+  for update using (
+    exists (select 1 from public.teams t where t.id = team_id and t.leader_id = auth.uid())
+  );
 drop policy if exists "team_members_delete_own" on public.team_members;
-create policy "team_members_delete_own" on public.team_members for delete using (auth.uid() = user_id);
+create policy "team_members_delete_self_or_leader" on public.team_members
+  for delete using (
+    auth.uid() = user_id
+    or exists (select 1 from public.teams t where t.id = team_id and t.leader_id = auth.uid())
+  );
+
+create or replace function public.enforce_team_capacity()
+returns trigger language plpgsql security definer set search_path = public as $$
+declare
+  current_count int;
+  cap int;
+begin
+  perform pg_advisory_xact_lock(hashtext(NEW.team_id::text));
+  select max_size into cap from public.teams where id = NEW.team_id;
+  select count(*) into current_count from public.team_members where team_id = NEW.team_id;
+  if current_count >= coalesce(cap, 4) then
+    raise exception 'Squad is full';
+  end if;
+  return NEW;
+end;
+$$;
+
+drop trigger if exists on_team_member_insert_capacity on public.team_members;
+create trigger on_team_member_insert_capacity
+  before insert on public.team_members
+  for each row execute function public.enforce_team_capacity();
+
+create or replace function public.enforce_event_capacity()
+returns trigger language plpgsql security definer set search_path = public as $$
+declare
+  current_count int;
+  cap int;
+begin
+  perform pg_advisory_xact_lock(hashtext(NEW.event_id::text));
+  select max_seats into cap from public.events where id = NEW.event_id;
+  select count(*) into current_count
+  from public.registrations
+  where event_id = NEW.event_id and status <> 'cancelled';
+  if current_count >= coalesce(cap, 100) then
+    raise exception 'Event is full';
+  end if;
+  return NEW;
+end;
+$$;
+
+drop trigger if exists on_registration_insert_capacity on public.registrations;
+create trigger on_registration_insert_capacity
+  before insert on public.registrations
+  for each row execute function public.enforce_event_capacity();
 
 -- ============================================================
 -- AUDIT LOGS (admin only)
@@ -448,27 +572,53 @@ from public.profiles p
 where p.is_banned = false
 order by p.xp desc;
 
--- ============================================================
--- SAMPLE SEED DATA (optional — remove in production)
--- ============================================================
--- Insert sample events if table is empty
-insert into public.events (title, description, category, venue, event_date, xp_reward, status, max_seats)
-select * from (values
-  ('CODE WARS 2026', 'Competitive programming battle. Bring your A-game.', 'Tech', 'CS Block Lab', now() + interval '10 days', 500, 'upcoming', 200),
-  ('ROBOTIX CHALLENGE', 'Build autonomous robots. Fight for the title.', 'Robotics', 'Mech Block Arena', now() + interval '14 days', 400, 'upcoming', 100),
-  ('DESIGN ARENA', 'UI/UX hackathon. 24-hour design sprint.', 'Design', 'Design Studio', now() + interval '16 days', 300, 'upcoming', 80),
-  ('CULTURAL GALA 2026', 'Annual cultural fest. Performances, art, food.', 'Cultural', 'Open Air Theatre', now() + interval '20 days', 200, 'upcoming', 500),
-  ('ML SUMMIT', 'Machine learning paper presentations.', 'Tech', 'Seminar Hall A', now() + interval '25 days', 350, 'upcoming', 150),
-  ('SPORTS DAY', 'Inter-department sports competition.', 'Sports', 'Sports Ground', now() + interval '30 days', 250, 'upcoming', 300)
-) as v(title, description, category, venue, event_date, xp_reward, status, max_seats)
-where not exists (select 1 from public.events limit 1);
+create or replace function public.increment_xp(user_id_param uuid, xp_amount int)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if coalesce(public.current_user_role(), '') <> 'admin' then
+    raise exception 'Only admins can award XP directly';
+  end if;
+  update public.profiles
+  set
+    xp = xp + xp_amount,
+    level = floor((xp + xp_amount) / 1000) + 1,
+    updated_at = now()
+  where id = user_id_param;
+end;
+$$;
+revoke execute on function public.increment_xp(uuid, int) from public;
+grant execute on function public.increment_xp(uuid, int) to authenticated;
 
--- Insert sample clubs if table is empty
-insert into public.clubs (name, description, category, is_approved, member_count)
-select * from (values
-  ('CodeCraft Club', 'Competitive programming and hackathons.', 'Tech', true, 0),
-  ('RoboLeague', 'Robotics design and autonomous systems.', 'Robotics', true, 0),
-  ('Design Collective', 'UI/UX, graphic design, and creative arts.', 'Design', true, 0),
-  ('Cultural Society', 'Arts, drama, music, and cultural events.', 'Cultural', true, 0)
-) as v(name, description, category, is_approved, member_count)
-where not exists (select 1 from public.clubs limit 1);
+create or replace function public.verify_certificate(code text)
+returns table (
+  holder_name text,
+  title text,
+  event_title text,
+  issued_at timestamptz
+)
+language sql security definer set search_path = public stable as $$
+  select p.name, c.title, e.title, c.issued_at
+  from public.certificates c
+  join public.profiles p on p.id = c.user_id
+  left join public.events e on e.id = c.event_id
+  where c.verify_code = lower(code)
+$$;
+grant execute on function public.verify_certificate(text) to anon, authenticated;
+
+create index if not exists idx_registrations_event on public.registrations(event_id);
+create index if not exists idx_registrations_user on public.registrations(user_id);
+create index if not exists idx_registrations_team on public.registrations(team_id);
+create index if not exists idx_events_category on public.events(category);
+create index if not exists idx_events_created_by on public.events(created_by);
+create index if not exists idx_events_status on public.events(status);
+create index if not exists idx_team_members_team on public.team_members(team_id);
+create index if not exists idx_team_members_user on public.team_members(user_id);
+create index if not exists idx_notifications_user on public.notifications(user_id);
+create index if not exists idx_bookmarks_user on public.bookmarks(user_id);
+create index if not exists idx_certificates_user on public.certificates(user_id);
+create index if not exists idx_attendance_event on public.attendance(event_id);
+create index if not exists idx_club_members_club on public.club_members(club_id);

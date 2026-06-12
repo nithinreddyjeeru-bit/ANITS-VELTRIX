@@ -82,24 +82,6 @@ export function useRegistrations() {
       link: `/events/${eventId}`
     });
 
-    // XP for registration (50 XP)
-    try {
-      await supabase.rpc("increment_xp", { user_id_param: user.id, xp_amount: 50 });
-    } catch {
-      const { data: p } = await supabase.from("profiles").select("xp").eq("id", user.id).single();
-      if (p) {
-        const nextXp = p.xp + 50;
-        await supabase
-          .from("profiles")
-          .update({
-            xp: nextXp,
-            level: Math.floor(nextXp / 1000) + 1,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("id", user.id);
-      }
-    }
-
     setRegistrations(prev => [data, ...prev]);
     return data;
   };

@@ -72,7 +72,7 @@ export default function RefundPolicy() {
       {/* Body */}
       <div style={{ maxWidth: "820px", margin: "0 auto", padding: "60px var(--side-padding) 100px" }}>
         <p className="font-space" style={{ lineHeight: "1.8", fontSize: "1rem", marginBottom: "48px", opacity: 0.75 }}>
-          We want every student's experience on VELTRIX to be fair and transparent. Please read our refund and
+          We want every student&apos;s experience on VELTRIX to be fair and transparent. Please read our refund and
           cancellation policy below before registering for any paid events.
         </p>
 

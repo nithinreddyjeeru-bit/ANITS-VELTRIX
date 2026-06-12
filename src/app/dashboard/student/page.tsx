@@ -11,7 +11,7 @@ import TeamLobby from "@/components/TeamLobby";
 import QRCode from "qrcode";
 import { 
   Zap, Trophy, Calendar, Award, Bookmark, Bell, Settings, 
-  ChevronRight, ArrowLeft, Clock, CreditCard, QrCode, 
+  ChevronRight, ArrowLeft, Clock, QrCode, 
   ShieldCheck, CheckCircle, Flame, Star, MessageSquare, MapPin
 } from "lucide-react";
 
@@ -40,34 +40,7 @@ export default function StudentDashboard() {
   // Selected registration for the expanded Mission Control Room
   const [selectedReg, setSelectedReg] = useState<any | null>(null);
   const [expandedQrUrl, setExpandedQrUrl] = useState("");
-  const [payingRegId, setPayingRegId] = useState<string | null>(null);
   const [countdownString, setCountdownString] = useState("");
-
-  useEffect(() => {
-    fetchDashboardData();
-
-    let channel: ReturnType<typeof supabase.channel> | null = null;
-
-    // Realtime notifications — scoped to THIS user only.
-    (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      channel = (supabase.channel(`student-notifs-${user.id}`) as any)
-        .on("postgres_changes", {
-          event: "INSERT", schema: "public", table: "notifications",
-          filter: `user_id=eq.${user.id}`,
-        },
-          (payload: any) => {
-            setNotifications(prev => [payload.new, ...prev]);
-            setUnread(prev => prev + 1);
-          })
-        .subscribe();
-    })();
-
-    return () => {
-      if (channel) supabase.removeChannel(channel).catch(console.error);
-    };
-  }, [router]);
 
   // Countdown timer for active selected mission
   useEffect(() => {
@@ -92,7 +65,17 @@ export default function StudentDashboard() {
     return () => clearInterval(timer);
   }, [selectedReg]);
 
-  const fetchDashboardData = async () => {
+  async function generateQR(token: string, eventId: string) {
+    const qrData = JSON.stringify({ token, event_id: eventId, app: "veltrix" });
+    const url = await QRCode.toDataURL(qrData, { 
+      width: 250, 
+      margin: 2, 
+      color: { dark: "#0B0B0B", light: "#FFF6E3" } 
+    });
+    setExpandedQrUrl(url);
+  }
+
+  async function fetchDashboardData() {
     try {
       setLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
@@ -141,60 +124,38 @@ export default function StudentDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }
+
+  useEffect(() => {
+    fetchDashboardData();
+
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+
+    // Realtime notifications — scoped to THIS user only.
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      channel = (supabase.channel(`student-notifs-${user.id}`) as any)
+        .on("postgres_changes", {
+          event: "INSERT", schema: "public", table: "notifications",
+          filter: `user_id=eq.${user.id}`,
+        },
+          (payload: any) => {
+            setNotifications(prev => [payload.new, ...prev]);
+            setUnread(prev => prev + 1);
+          })
+        .subscribe();
+    })();
+
+    return () => {
+      if (channel) supabase.removeChannel(channel).catch(console.error);
+    };
+  }, [router]);
 
   const handleSelectRegistration = async (reg: any) => {
     setSelectedReg(reg);
     if (reg.qr_token) {
       await generateQR(reg.qr_token, reg.event_id);
-    }
-  };
-
-  const generateQR = async (token: string, eventId: string) => {
-    const qrData = JSON.stringify({ token, event_id: eventId, app: "veltrix" });
-    const url = await QRCode.toDataURL(qrData, { 
-      width: 250, 
-      margin: 2, 
-      color: { dark: "#0B0B0B", light: "#FFF6E3" } 
-    });
-    setExpandedQrUrl(url);
-  };
-
-  const handleCompleteDelayedPayment = async (regId: string) => {
-    try {
-      setPayingRegId(regId);
-      
-      // Simulate Razorpay sandbox delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      // Confirm payment. The secure qr_token was generated server-side at
-      // registration time (gen_random_bytes) — never regenerate it on the
-      // client with Math.random (weak + collision-prone).
-      const { error } = await supabase
-        .from("registrations")
-        .update({
-          status: "confirmed",
-          payment_status: "paid",
-        })
-        .eq("id", regId);
-
-      if (error) throw error;
-
-      await fetchDashboardData();
-
-      // 3. Trigger Notification
-      await supabase.from("notifications").insert({
-        user_id: profile?.id,
-        title: "💳 Payment Confirmed!",
-        body: `Your payment was successfully processed. Your secure QR pass is now active!`,
-        type: "success",
-        link: "/dashboard"
-      });
-
-    } catch (err) {
-      console.error("Payment error:", err);
-    } finally {
-      setPayingRegId(null);
     }
   };
 
@@ -333,21 +294,6 @@ export default function StudentDashboard() {
                     </span>
                   </div>
                 </div>
-
-                {/* DELAYED MEMBER PAYMENT TRIGGER */}
-                {selectedReg.status === "approved" && selectedReg.payment_status === "pending" && (
-                  <div className="delayed-payment-panel brutal-card bg-cream">
-                    <h3 className="font-bebas warning-title"><CreditCard /> PAYMENT PENDING</h3>
-                    <p>Your request to join the squad was approved! Please complete the transaction to activate your entry pass.</p>
-                    <button 
-                      className="btn btn-green pay-btn font-bebas"
-                      onClick={() => handleCompleteDelayedPayment(selectedReg.id)}
-                      disabled={payingRegId !== null}
-                    >
-                      {payingRegId === selectedReg.id ? "AUTHORIZING STRIPE CHECKOUT..." : "PROCEED TO PAY ₹ 150.00"}
-                    </button>
-                  </div>
-                )}
 
                 {/* TICKET QR GATEWAY */}
                 {selectedReg.qr_token && selectedReg.status !== "pending" && (

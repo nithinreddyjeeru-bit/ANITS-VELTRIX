@@ -15,7 +15,7 @@ export function useLeaderboard(limit = 50) {
 
       const { data } = await supabase
         .from("profiles")
-        .select("id, name, email, department, avatar_url, xp, level")
+        .select("id, name, department, avatar_url, xp, level")
         .eq("is_banned", false)
         .order("xp", { ascending: false })
         .limit(limit);

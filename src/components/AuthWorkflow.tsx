@@ -44,6 +44,12 @@ export function AuthWorkflow() {
       const department = formData.department.trim();
       const bio = formData.bio.trim();
 
+      if (!email.endsWith("@anits.edu.in")) {
+        setMessage("Error: Please register with a valid ANITS campus email address (@anits.edu.in).");
+        setLoading(false);
+        return;
+      }
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password: formData.password,
@@ -81,14 +87,11 @@ export function AuthWorkflow() {
       // Login via Registration Number
       const registration_no = formData.registration_no.trim();
       
-      // 1. Find the email associated with this registration number
-      const { data: profileData, error: profileError } = await supabase
-        .from("profiles")
-        .select("email")
-        .eq("registration_no", registration_no)
-        .single();
+      // 1. Find the email associated with this registration number using secure RPC
+      const { data: email, error: rpcError } = await supabase
+        .rpc("get_email_by_registration_no", { reg_no: registration_no });
 
-      if (profileError || !profileData) {
+      if (rpcError || !email) {
         setMessage("Error: Registration number not found.");
         setLoading(false);
         return;
@@ -96,7 +99,7 @@ export function AuthWorkflow() {
 
       // 2. Sign in with the found email
       const { data, error } = await supabase.auth.signInWithPassword({
-        email: profileData.email,
+        email,
         password: formData.password,
       });
 

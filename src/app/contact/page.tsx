@@ -84,7 +84,7 @@ export default function ContactPage() {
           Contact <span style={{ color: "var(--pink)" }}>Us</span>
         </h1>
         <p className="font-space" style={{ opacity: 0.6, fontSize: "0.95rem", maxWidth: "600px" }}>
-          We're here to help. Reach out via the channels below and we'll get back to you within 2 business days.
+          We&apos;re here to help. Reach out via the channels below and we&apos;ll get back to you within 2 business days.
         </p>
       </div>
 

@@ -49,7 +49,7 @@ export default function TeamLobby({ teamId, userId, isLead, onLeaveOrDisband }: 
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const fetchTeamDetails = async () => {
+  async function fetchTeamDetails() {
     try {
       setLoading(true);
       // Fetch Team details
@@ -81,9 +81,9 @@ export default function TeamLobby({ teamId, userId, isLead, onLeaveOrDisband }: 
     } finally {
       setLoading(false);
     }
-  };
+  }
 
-  const setupRealtimeLobby = () => {
+  function setupRealtimeLobby() {
     // Subscribe to Supabase Broadcast channel for lobby changes & dynamic chat
     const channel = supabase.channel(`team_lobby_${teamId}`, {
       config: {
@@ -111,7 +111,7 @@ export default function TeamLobby({ teamId, userId, isLead, onLeaveOrDisband }: 
       });
 
     broadcastChannelRef.current = channel;
-  };
+  }
 
   const toggleReady = () => {
     const newState = !myReadyState;
@@ -179,7 +179,7 @@ export default function TeamLobby({ teamId, userId, isLead, onLeaveOrDisband }: 
       // Also updates their payment eligibility
       await supabase
         .from("registrations")
-        .update({ status: "approved" })
+        .update({ status: "confirmed", payment_status: "free" })
         .eq("user_id", reqUserId)
         .eq("event_id", team?.event_id);
 
@@ -187,7 +187,7 @@ export default function TeamLobby({ teamId, userId, isLead, onLeaveOrDisband }: 
       await supabase.from("notifications").insert({
         user_id: reqUserId,
         title: `⚡ Joined ${team?.name || "squad"}!`,
-        body: `Your request to join ${team?.name} was approved by the Team Lead! Please proceed to complete checkout.`,
+        body: `Your request to join ${team?.name} was approved by the Team Lead. Your QR pass is active.`,
         type: "success",
         link: "/dashboard"
       });
